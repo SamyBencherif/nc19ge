@@ -40,6 +40,8 @@ typedef struct {
 } transform;
 
 transform* transform_new();
+
+void transform_set(transform* t, vec2* pos, float angle, float scale);
 void transform_apply(transform* t, vec2* v);
 
 /* screen info */
