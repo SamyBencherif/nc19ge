@@ -3,6 +3,12 @@
 
 #define BLOCK_ASPECT (34./16)
 
+char* uhh = "@todo TODO";
+
+/*
+ * @todo get todo bot to work
+ */
+
 /*
  * TODO add USE-ASCII compile flag
  * (use -DUSE-ASCII in Makefile and ifdef in c)
