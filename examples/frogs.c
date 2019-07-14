@@ -6,15 +6,16 @@
 
 void setup()
 {
-  NC19GE_GLOBAL_VIEW_MODEL = malloc(1*sizeof(void*));
+  NC19GE_GLOBAL_VIEW_MODEL = malloc(sizeof(NC19GE_GLOBAL_VIEW_MODEL));
+  NC19GE_GLOBAL_VIEW_MODEL->items = malloc(1*sizeof(void*));
   NC19GE_GLOBAL_VIEW_MODEL->count = 1;
 
-  quad Q;
-  Q.x = 0;
-  Q.y = 0;
-  Q.w = 2;
-  Q.h = 2;
-  NC19GE_GLOBAL_VIEW_MODEL->items[0] = &Q;
+  quad* Q = malloc(sizeof(quad));
+  Q->x = 0;
+  Q->y = 0;
+  Q->w = 4;
+  Q->h = 4;
+  NC19GE_GLOBAL_VIEW_MODEL->items[0] = Q;
 }
 
 void update()
