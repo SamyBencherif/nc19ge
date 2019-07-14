@@ -142,10 +142,9 @@ void draw()
     }
 }
 
-
 void pix(int x, int y)
 {
-  mvaddch(NC19GE_GLOBAL_SCREEN_INFO->rows-y-1, x, BLOCK_CHAR);
+  mvaddch(NC19GE_GLOBAL_SCREEN_INFO->rows-y-1, x, BLOCK_CHAROD);
 }
 
 void execute(void setup(), void update())
@@ -189,7 +188,11 @@ void execute(void setup(), void update())
 
     k = getch();
 
-    /* TODO if resize, update_screen_info */
+    /*
+     * @todo on resize, update_screen_info
+     * @body to ensure things that are supposed to be centered stay
+     * centered
+     */
   }
 
   /* @begin deinitialization */

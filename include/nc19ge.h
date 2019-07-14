@@ -3,13 +3,6 @@
 
 #define BLOCK_ASPECT (34./16)
 
-char* uhh = "@todo TODO";
-
-/*
- * @todo get todo bot to work
- * @body include descriptive messages
- */
-
 /*
  * TODO add USE-ASCII compile flag
  * (use -DUSE-ASCII in Makefile and ifdef in c)
@@ -82,7 +75,11 @@ typedef struct{
 
 /* @end data structures */
 
-/* TODO remove these from header */
+/*
+ * @todo remove these from header
+ * @body these structures should only be directly accessed from the
+ * module itself.
+ */
 transform* NC19GE_GLOBAL_TRANSFORM;
 screen_info* NC19GE_GLOBAL_SCREEN_INFO;
 view_model* NC19GE_GLOBAL_VIEW_MODEL;
