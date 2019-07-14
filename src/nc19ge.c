@@ -19,6 +19,15 @@ vec2* vec2_zero()
   return v;
 }
 
+vec2* vec2_new(float x, float y)
+{
+  vec2* v;
+  v = malloc(sizeof(vec2));
+  v->x = x;
+  v->y = y;
+  return v;
+}
+
 /* mat4x4 */
 mat4x4* mat4x4_identity()
 {
@@ -46,6 +55,54 @@ transform* transform_new()
   return t;
 }
 
+void transform_apply(transform* t, vec2* v)
+{
+  float x = v->x * t->rot_scale->m00 + v->y * t->rot_scale->m01;
+  float y = v->x * t->rot_scale->m10 + v->y * t->rot_scale->m11;
+  v->x = x + t->translate->x;
+  v->y = y + t->translate->y;
+}
+
+void transform_free(transform* t)
+{
+  free(t->translate);
+  free(t->rot_scale);
+  free(t);
+}
+
+/* screen info */
+
+screen_info* screen_info_get()
+{
+  int x;
+  int y;
+  getmaxyx(stdscr, y, x);
+  screen_info* si = malloc(sizeof(screen_info));
+  si->cols = x;
+  si->rows = y;
+
+  return si;
+}
+
+/* quad */
+
+bool quad_contains_point(quad* q, vec2* v)
+{
+  return q->x <= v->x && q->x + q->w > v->x &&
+         q->y <= v->y && q->y + q->h > v->y;
+}
+
+/* view model */
+
+void view_model_free(view_model* vm)
+{
+  for (int i=0; i<vm->count; i++)
+  {
+    free(vm->items[i]);
+  }
+  free(vm);
+}
+
 /* @end data structures */
 
 void draw()
@@ -57,42 +114,37 @@ void draw()
    * (also needs prev model + transform or something)
    *
    */
+
+  vec2 h;
+  for (int x=0; x<NC19GE_GLOBAL_SCREEN_INFO->cols; x++)
+    for (int y=0; y<NC19GE_GLOBAL_SCREEN_INFO->rows; y++)
+    {
+      /* Center world coords in screen */
+      h.x = x - NC19GE_GLOBAL_SCREEN_INFO->cols/2;
+      h.y = y - NC19GE_GLOBAL_SCREEN_INFO->rows/2;
+
+      /* Perform aspect corrections */
+      h.y *= BLOCK_ASPECT;
+
+      /* Apply view port transformation */
+      transform_apply(NC19GE_GLOBAL_TRANSFORM, &h);
+
+      for (int i=0; i<NC19GE_GLOBAL_VIEW_MODEL->count; i++)
+      {
+        quad* q = NC19GE_GLOBAL_VIEW_MODEL->items[i];
+
+        if (quad_contains_point(q, &h))
+          pix(
+               x,
+               y
+             );
+      }
+    }
 }
 
-void quad(float x, float y, float w, float h)
+void pix(int x, int y)
 {
-  /*
-   * This function will need to update some kind of data structure that
-   * can keep track of boundary collisions for pixel-by-pixel StoW
-   * projection.
-   *
-   * actually... that's retarded. I need to go ahead and know which
-   * pixels need changing and only update those ones.
-   *
-   * ah but here's the thing. redraw can occur over translation OR
-   * the initial draw. So i need a way to compute update pixels in
-   * a general case.
-   *
-   * I'm thinking that must be the data structure. The information
-   * must be stored so a translate can add and remove objects from the
-   * screen. In theory, a very large view model can have some
-   * components that are offloaded into a file (thanks to the
-   * linearity of our transforms)
-   */
-
-  /*
-   *  pseudo-code
-   *  1. Update View Model (data structure)
-   *  2. Request Redraw
-   *
-   *  this is to reduce redundancy in the apply translation method
-   *  which also must be implemented.
-   */
-}
-
-void pix(float x, float y)
-{
-  mvaddch(10, 10, '@');
+  mvaddch(NC19GE_GLOBAL_SCREEN_INFO->rows-y-1, x, BLOCK_CHAROD);
 }
 
 void execute(void setup(), void update())
@@ -123,6 +175,7 @@ void execute(void setup(), void update())
   /* NCURSES is initialized */
 
   NC19GE_GLOBAL_TRANSFORM = transform_new();
+  NC19GE_GLOBAL_SCREEN_INFO = screen_info_get();
 
   setup();
 
@@ -130,8 +183,16 @@ void execute(void setup(), void update())
   k = 0;
   while (true)
   {
+    draw();
     update();
+
     k = getch();
+
+    /*
+     * @todo on resize, update_screen_info
+     * @body to ensure things that are supposed to be centered stay
+     * centered
+     */
   }
 
   /* @begin deinitialization */
