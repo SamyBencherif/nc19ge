@@ -136,24 +136,41 @@ void draw()
         if (quad_contains_point(q, &h))
           pix(
                x,
-               y
+               y,
+               q->color
              );
       }
     }
 }
 
-void pix(int x, int y)
+void print(int x, int y, char* string, int color)
 {
-  mvaddstr(NC19GE_GLOBAL_SCREEN_INFO->rows-y-1, x, "█");
+  /* color is ignored unless NGLB_COL_MOD is TEXT */
+  color_set(1, NULL);
+
+  mvaddstr(y, x, string);
 }
 
-void execute(void setup(), void update())
+void pix(int x, int y, int color)
+{
+  /* The color pairs correspond to the color constants */
+  color_set(color+1, NULL);
+
+  mvaddch(NC19GE_GLOBAL_SCREEN_INFO->rows-y-1, x, ' ');
+}
+
+void execute(void setup(), void update(), void key(char k))
 {
   setlocale(LC_ALL, "");
 
   initscr();
+  start_color();
+
   cbreak();
   noecho();
+
+  /* hide cursor */
+  curs_set(0);
 
   nonl();
   intrflush(stdscr, FALSE);
@@ -172,6 +189,17 @@ void execute(void setup(), void update())
    * */
   halfdelay(1);
 
+  /* Color config */
+
+  init_pair(1, COLOR_WHITE, COLOR_BLACK);
+  init_pair(2, COLOR_BLACK, COLOR_RED);
+  init_pair(3, COLOR_BLACK, COLOR_GREEN);
+  init_pair(4, COLOR_BLACK, COLOR_YELLOW);
+  init_pair(5, COLOR_BLACK, COLOR_BLUE);
+  init_pair(6, COLOR_BLACK, COLOR_MAGENTA);
+  init_pair(7, COLOR_BLACK, COLOR_CYAN);
+  init_pair(8, COLOR_BLACK, COLOR_WHITE);
+
   /* NCURSES is initialized */
 
   NC19GE_GLOBAL_TRANSFORM = transform_new();
@@ -180,13 +208,17 @@ void execute(void setup(), void update())
   setup();
 
   char k;
-  k = 0;
   while (true)
   {
     draw();
     update();
 
     k = getch();
+
+    if (k != ERR)
+    {
+      key(k);
+    }
 
     /*
      * @todo on resize, update_screen_info

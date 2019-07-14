@@ -15,14 +15,23 @@ void setup()
   Q->y = 0;
   Q->w = 4;
   Q->h = 4;
+  Q->color = COLOR_GREEN;
   NC19GE_GLOBAL_VIEW_MODEL->items[0] = Q;
+
+  print(0, 0, "Use WASD to nudge translation.", 0);
 }
 
 void update()
 {
 }
 
+void key(char k)
+{
+  if (k == 'd')
+    NC19GE_GLOBAL_TRANSFORM->translate->x += 1;
+}
+
 int main(int argc, char** argv) {
-  execute(setup, update);
+  execute(setup, update, key);
   return EXIT_SUCCESS;
 }

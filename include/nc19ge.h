@@ -1,14 +1,8 @@
 
 #include <stdbool.h>
+#include <ncurses.h>
 
 #define BLOCK_ASPECT (34./16)
-
-/*
- * TODO add USE-ASCII compile flag
- * (use -DUSE-ASCII in Makefile and ifdef in c)
- *
- */
-
 
 /* @begin data structures */
 
@@ -62,6 +56,7 @@ typedef struct {
   int y;
   int w;
   int h;
+  int color;
 } quad;
 
 bool quad_contains_point(quad* q, vec2* v);
@@ -72,6 +67,11 @@ typedef struct{
   void** items;
   int count;
 } view_model;
+
+typedef enum {
+  BLOCK,
+  TEXT
+} color_mode;
 
 /* @end data structures */
 
@@ -84,7 +84,14 @@ transform* NC19GE_GLOBAL_TRANSFORM;
 screen_info* NC19GE_GLOBAL_SCREEN_INFO;
 view_model* NC19GE_GLOBAL_VIEW_MODEL;
 
-/* Screen space blit a pixel. */
-void pix(int x, int y);
+/*
+ * Default is BLOCK
+ */
+void set_color_mode(color_mode mode);
 
-void execute(void setup(), void update());
+void print(int x, int y, char* string, int color);
+
+/* Screen space blit a pixel. */
+void pix(int x, int y, int color);
+
+void execute(void setup(), void update(), void key(char k));
