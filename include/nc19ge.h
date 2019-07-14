@@ -7,6 +7,7 @@ char* uhh = "@todo TODO";
 
 /*
  * @todo get todo bot to work
+ * @body include descriptive messages
  */
 
 /*
