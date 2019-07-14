@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include <locale.h>
-#include <curses.h>
+#include <ncurses.h>
 
 #include "nc19ge.h"
 
@@ -144,7 +144,7 @@ void draw()
 
 void pix(int x, int y)
 {
-  mvaddch(NC19GE_GLOBAL_SCREEN_INFO->rows-y-1, x, BLOCK_CHAROD);
+  mvaddstr(NC19GE_GLOBAL_SCREEN_INFO->rows-y-1, x, "█");
 }
 
 void execute(void setup(), void update())
