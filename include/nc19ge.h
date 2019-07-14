@@ -38,13 +38,29 @@ typedef struct {
   float aspect;
 } screen_info;
 
+/* view components */
+
+typedef struct {
+  int x;
+  int y;
+  int w;
+  int h;
+} quad;
+
+/* view model (uses view_components) */
+
+typedef struct{
+  void** items;
+  int count;
+} view_model;
+
 /* @end data structures */
 
 transform* NC19GE_GLOBAL_TRANSFORM;
 screen_info* NC19GE_GLOBAL_SCREEN_INFO;
+view_model* NC19GE_GLOBAL_VIEW_MODEL;
 
-void quad(float x, float y, float w, float h);
+/* Screen space blit a pixel. */
+void pix(int x, int y);
 
-void pix(float x, float y);
-
-void execute(void setup(), void update);
+void execute(void setup(), void update());

@@ -46,6 +46,14 @@ transform* transform_new()
   return t;
 }
 
+screen_info* screen_info_get()
+{
+  int x;
+  int y;
+  getmaxyx(stdscr, y, x);
+  screen_info* si = malloc(sizeof(screen_info));
+}
+
 /* @end data structures */
 
 void draw()
@@ -57,42 +65,18 @@ void draw()
    * (also needs prev model + transform or something)
    *
    */
+
+  for (int i=0; i<NC19GE_GLOBAL_VIEW_MODEL->count; i++)
+  {
+    NC19GE_GLOBAL_VIEW_MODEL->items[i]
+  }
+
 }
 
-void quad(float x, float y, float w, float h)
-{
-  /*
-   * This function will need to update some kind of data structure that
-   * can keep track of boundary collisions for pixel-by-pixel StoW
-   * projection.
-   *
-   * actually... that's retarded. I need to go ahead and know which
-   * pixels need changing and only update those ones.
-   *
-   * ah but here's the thing. redraw can occur over translation OR
-   * the initial draw. So i need a way to compute update pixels in
-   * a general case.
-   *
-   * I'm thinking that must be the data structure. The information
-   * must be stored so a translate can add and remove objects from the
-   * screen. In theory, a very large view model can have some
-   * components that are offloaded into a file (thanks to the
-   * linearity of our transforms)
-   */
 
-  /*
-   *  pseudo-code
-   *  1. Update View Model (data structure)
-   *  2. Request Redraw
-   *
-   *  this is to reduce redundancy in the apply translation method
-   *  which also must be implemented.
-   */
-}
-
-void pix(float x, float y)
+void pix(int x, int y)
 {
-  mvaddch(10, 10, '@');
+  mvaddch(x, y, '@');
 }
 
 void execute(void setup(), void update())
