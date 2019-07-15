@@ -53,6 +53,8 @@ transform* transform_new()
   t = malloc(sizeof(transform));
   t->translate = vec2_zero();
   t->rot_scale = mat4x4_identity();
+  t->angle = 0;
+  t->scale = 1;
 
   return t;
 }
@@ -60,6 +62,8 @@ transform* transform_new()
 void transform_set(transform* t, vec2* pos, float angle, float scale)
 {
   t->translate = pos;
+  t->angle = angle;
+  t->scale = scale;
 
   /*
    * t->mat4x4 =
@@ -78,10 +82,15 @@ void transform_set(transform* t, vec2* pos, float angle, float scale)
 
 }
 
+void transform_translate(transform* t, vec2* v)
+{
+  transform_apply(t, v);
+  t->translate->x = v->x;
+  t->translate->y = v->y;
+}
+
 void transform_apply(transform* t, vec2* v)
 {
-  v->x = v->x + t->translate->x;
-  v->y = v->y + t->translate->y;
 
   /*
    * Stop. These lines are not independant.
@@ -90,6 +99,9 @@ void transform_apply(transform* t, vec2* v)
   float y = v->x * t->rot_scale->m10 + v->y * t->rot_scale->m11;
   v->x = x;
   v->y = y;
+
+  v->x = v->x + t->translate->x;
+  v->y = v->y + t->translate->y;
 }
 
 void transform_free(transform* t)
@@ -142,6 +154,39 @@ view_component* quad_new(float x, float y, float w, float h, color color)
   return c;
 }
 
+/* ellipse */
+
+color ellipse_peek(view_component* c, vec2* v)
+{
+  ellipse* e = c->fields;
+  if (pow(v->x - e->x, 2) / pow(e->w, 2) +
+      pow(v->y - e->y, 2) / pow(e->h, 2) <= 1)
+  {
+    return e->color;
+  }
+  else
+  {
+    return CLEAR;
+  }
+}
+
+view_component* ellipse_new(float x, float y, float w, float h, color color)
+{
+  view_component* c = malloc(sizeof(view_component));
+
+  ellipse* e = malloc(sizeof(ellipse));
+  e->x = x;
+  e->y = y;
+  e->w = w;
+  e->h = h;
+  e->color = color;
+
+  c->fields = e;
+  c->peek = ellipse_peek;
+
+  return c;
+}
+
 void view_component_free(view_component* c)
 {
   free(c->fields);
@@ -159,7 +204,7 @@ view_model* view_model_new()
   return vm;
 }
 
-void view_model_insert(view_model* vm, view_component* c)
+view_component* view_model_insert(view_model* vm, view_component* c)
 {
   if (vm->head == NULL)
   {
@@ -172,11 +217,12 @@ void view_model_insert(view_model* vm, view_component* c)
     vm->head->postrender = c;
     vm->head = c;
   }
+  return c;
 }
 
-void view_component_add(view_component* c)
+void* view_component_add(view_component* c)
 {
-  view_model_insert(NC19GE_GLOBAL_VIEW_MODEL, c);
+  return view_model_insert(NC19GE_GLOBAL_VIEW_MODEL, c)->fields;
 }
 
 /* @end data structures */
@@ -196,8 +242,8 @@ void draw()
     for (int y=0; y<NC19GE_GLOBAL_SCREEN_INFO->rows; y++)
     {
       /* Center world coords in screen */
-      h.x = x - NC19GE_GLOBAL_SCREEN_INFO->cols/2;
-      h.y = y - NC19GE_GLOBAL_SCREEN_INFO->rows/2;
+      h.x = x - NC19GE_GLOBAL_SCREEN_INFO->cols/2 + .5;
+      h.y = y - NC19GE_GLOBAL_SCREEN_INFO->rows/2 + .5;
 
       /* Perform aspect corrections */
       h.y *= BLOCK_ASPECT;

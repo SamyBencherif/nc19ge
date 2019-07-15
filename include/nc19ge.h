@@ -2,7 +2,9 @@
 #include <stdbool.h>
 #include <ncurses.h>
 
+/* Set to 34/16 to perform aspect corrections */
 #define BLOCK_ASPECT 1
+
 
 /*
  * @todo ensure all colors are of type color
@@ -53,11 +55,14 @@ mat4x4* mat4x4_identity();
 typedef struct {
   vec2* translate;
   mat4x4* rot_scale;
+  float angle;
+  float scale;
 } transform;
 
 transform* transform_new();
 
 void transform_set(transform* t, vec2* pos, float angle, float scale);
+void transform_translate(transform* t, vec2* v);
 void transform_apply(transform* t, vec2* v);
 
 /* screen info */
@@ -96,12 +101,13 @@ view_component* quad_new(float x, float y, float w, float h, color color);
 typedef struct {
   float x;
   float y;
-  float r;
+  float w;
+  float h;
   color color;
 } ellipse;
 
 color ellipse_peek(view_component* c, vec2* v);
-view_component* ellipse_new(float x, float y, float r, color color);
+view_component* ellipse_new(float x, float y, float w, float h, color color);
 
 /* view model (uses view_components) */
 
@@ -111,10 +117,10 @@ typedef struct{
 } view_model;
 
 view_model* view_model_new();
-void view_model_insert(view_model* vm, view_component* c);
+view_component* view_model_insert(view_model* vm, view_component* c);
 void view_model_free(view_model* vm);
 
-void view_component_add(view_component* c);
+void* view_component_add(view_component* c);
 
 typedef enum {
   BLOCK,
