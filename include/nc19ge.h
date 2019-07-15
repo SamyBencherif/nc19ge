@@ -2,7 +2,23 @@
 #include <stdbool.h>
 #include <ncurses.h>
 
-#define BLOCK_ASPECT (34./16)
+#define BLOCK_ASPECT 1
+
+/*
+ * @todo ensure all colors are of type color
+ * @body some may still be ints.
+ */
+typedef enum {
+  BLACK = COLOR_BLACK,
+  RED = COLOR_RED,
+  GREEN = COLOR_GREEN,
+  YELLOW = COLOR_YELLOW,
+  BLUE = COLOR_BLUE,
+  MAGENTA = COLOR_MAGENTA,
+  CYAN = COLOR_CYAN,
+  WHITE = COLOR_WHITE,
+  CLEAR
+} color;
 
 /* @begin data structures */
 
@@ -51,24 +67,54 @@ typedef struct {
   int cols;
 } screen_info;
 
-/* view components */
+/* view component */
+
+typedef struct vc {
+  color (*peek)(struct vc* c, vec2* v);
+  void* fields;
+  struct vc* prerender;
+  struct vc* postrender;
+} view_component;
+
+/* specific view components */
+
+    /** quad **/
 
 typedef struct {
-  int x;
-  int y;
-  int w;
-  int h;
-  int color;
+  float x;
+  float y;
+  float w;
+  float h;
+  color color;
 } quad;
 
-bool quad_contains_point(quad* q, vec2* v);
+color quad_peek(view_component* c, vec2* v);
+view_component* quad_new(float x, float y, float w, float h, color color);
+
+    /** ellipse **/
+
+typedef struct {
+  float x;
+  float y;
+  float r;
+  color color;
+} ellipse;
+
+color ellipse_peek(view_component* c, vec2* v);
+view_component* ellipse_new(float x, float y, float r, color color);
 
 /* view model (uses view_components) */
 
 typedef struct{
-  void** items;
-  int count;
+  view_component* head;
+  view_component* tail;
 } view_model;
+
+view_model* view_model_new();
+void view_model_insert(view_model* vm, view_component* c);
+void view_model_free(view_model* vm);
+
+void view_component_add(view_component* c);
 
 typedef enum {
   BLOCK,

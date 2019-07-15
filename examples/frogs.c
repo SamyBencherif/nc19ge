@@ -13,18 +13,9 @@ void setup()
 {
   pos = vec2_new(0, 0);
 
-  NC19GE_GLOBAL_VIEW_MODEL = malloc(sizeof(NC19GE_GLOBAL_VIEW_MODEL));
-  NC19GE_GLOBAL_VIEW_MODEL->items = malloc(1*sizeof(void*));
-  NC19GE_GLOBAL_VIEW_MODEL->count = 1;
-
-  quad* Q = malloc(sizeof(quad));
-  Q->x = 0;
-  Q->y = 0;
-  Q->w = 4;
-  Q->h = 4;
-  Q->color = COLOR_GREEN;
-  NC19GE_GLOBAL_VIEW_MODEL->items[0] = Q;
-
+  view_component_add(quad_new(0,0,4,4,YELLOW));
+  view_component_add(quad_new(4,0,4,4,RED));
+  view_component_add(quad_new(0,4,4,4,BLUE));
 }
 
 void update()
@@ -34,13 +25,19 @@ void update()
   print(0, 2, "Use RF to set scale.", 0);
 
   char t[100];
-  snprintf(t, 100, "matrx [%f %f ; %f %f]",
+  snprintf(t, 100, "matrx [%f %f]\n      [%f %f]",
       NC19GE_GLOBAL_TRANSFORM->rot_scale->m00,
       NC19GE_GLOBAL_TRANSFORM->rot_scale->m01,
       NC19GE_GLOBAL_TRANSFORM->rot_scale->m10,
       NC19GE_GLOBAL_TRANSFORM->rot_scale->m11
   );
   print(0, 3, t, 0);
+
+  snprintf(t, 100, "trnsl [%f %f]",
+      NC19GE_GLOBAL_TRANSFORM->translate->x,
+      NC19GE_GLOBAL_TRANSFORM->translate->y
+  );
+  print(0, 6, t, 0);
 }
 
 void key(char k)
@@ -54,9 +51,9 @@ void key(char k)
   if (k == 'd')
     pos->x += 1;
   if (k == 'q')
-    angle += M_PI/6;
+    angle += M_PI/12;
   if (k == 'e')
-    angle -= M_PI/6;
+    angle -= M_PI/12;
   if (k == 'r')
     scale += .1;
   if (k == 'f')

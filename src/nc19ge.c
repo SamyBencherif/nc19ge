@@ -80,10 +80,16 @@ void transform_set(transform* t, vec2* pos, float angle, float scale)
 
 void transform_apply(transform* t, vec2* v)
 {
+  v->x = v->x + t->translate->x;
+  v->y = v->y + t->translate->y;
+
+  /*
+   * Stop. These lines are not independant.
+   */
   float x = v->x * t->rot_scale->m00 + v->y * t->rot_scale->m01;
   float y = v->x * t->rot_scale->m10 + v->y * t->rot_scale->m11;
-  v->x = x + t->translate->x;
-  v->y = y + t->translate->y;
+  v->x = x;
+  v->y = y;
 }
 
 void transform_free(transform* t)
@@ -109,21 +115,68 @@ screen_info* screen_info_get()
 
 /* quad */
 
-bool quad_contains_point(quad* q, vec2* v)
+color quad_peek(view_component* c, vec2* v)
 {
-  return q->x <= v->x && q->x + q->w > v->x &&
-         q->y <= v->y && q->y + q->h > v->y;
+  quad* q = c->fields;
+  if (q->x <= v->x && q->x + q->w > v->x &&
+      q->y <= v->y && q->y + q->h > v->y)
+    return q->color;
+  else
+    return CLEAR;
+}
+
+view_component* quad_new(int x, int y, int w, int h, int color)
+{
+  view_component* c = malloc(sizeof(view_component));
+
+  quad* q = malloc(sizeof(quad));
+  q->x = x;
+  q->y = y;
+  q->w = w;
+  q->h = h;
+  q->color = color;
+
+  c->fields = q;
+  c->peek = quad_peek;
+
+  return c;
+}
+
+void view_component_free(view_component* c)
+{
+  free(c->fields);
+  free(c);
 }
 
 /* view model */
 
-void view_model_free(view_model* vm)
+
+view_model* view_model_new()
 {
-  for (int i=0; i<vm->count; i++)
+  view_model* vm = malloc(sizeof(view_model));
+  vm->head = NULL;
+  vm->tail = NULL;
+  return vm;
+}
+
+void view_model_insert(view_model* vm, view_component* c)
+{
+  if (vm->head == NULL)
   {
-    free(vm->items[i]);
+    vm->head = c;
+    vm->tail = c;
   }
-  free(vm);
+  else
+  {
+    c->prerender = vm->head;
+    vm->head->postrender = c;
+    vm->head = c;
+  }
+}
+
+void view_component_add(view_component* c)
+{
+  view_model_insert(NC19GE_GLOBAL_VIEW_MODEL, c);
 }
 
 /* @end data structures */
@@ -152,28 +205,28 @@ void draw()
       /* Apply view port transformation */
       transform_apply(NC19GE_GLOBAL_TRANSFORM, &h);
 
-      for (int i=0; i<NC19GE_GLOBAL_VIEW_MODEL->count; i++)
-      {
-        quad* q = NC19GE_GLOBAL_VIEW_MODEL->items[i];
+      pix(
+           x,
+           y,
+           COLOR_BLACK
+         );
 
+      view_component* c;
+      for (
+            c = NC19GE_GLOBAL_VIEW_MODEL->tail;
+            c != NULL;
+            c = c->postrender
+          )
+      {
         /*
          * @todo optimize redraw
          * @body currently will set all pixels to the designated future value, instead it should set only if the future value is different from the present value.
          * @body here is a second line.
          */
 
-        if (quad_contains_point(q, &h))
-          pix(
-               x,
-               y,
-               q->color
-             );
-        else
-          pix(
-               x,
-               y,
-               COLOR_BLACK
-             );
+        color p = c->peek(c, &h);
+        if (p != CLEAR)
+          pix(x, y, p);
       }
     }
 }
@@ -239,6 +292,7 @@ void execute(void setup(), void update(), void key(char k))
 
   NC19GE_GLOBAL_TRANSFORM = transform_new();
   NC19GE_GLOBAL_SCREEN_INFO = screen_info_get();
+  NC19GE_GLOBAL_VIEW_MODEL = view_model_new();
 
   setup();
 
