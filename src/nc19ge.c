@@ -125,7 +125,7 @@ color quad_peek(view_component* c, vec2* v)
     return CLEAR;
 }
 
-view_component* quad_new(int x, int y, int w, int h, int color)
+view_component* quad_new(float x, float y, float w, float h, color color)
 {
   view_component* c = malloc(sizeof(view_component));
 
