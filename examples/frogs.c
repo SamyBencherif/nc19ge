@@ -4,6 +4,9 @@
 
 #include "nc19ge.h"
 #include <math.h>
+#ifndef M_PI
+  #define M_PI 3.1415926535897
+#endif
 
 vec2* pos;
 float angle = 0;
@@ -30,22 +33,25 @@ void update()
   print(0, 2, "Use RF to set scale.", 0);
 
   char t[100];
-  snprintf(t, 100, "matrx [%f %f]",
+  sprintf(t, "matrx [%f %f]",
       NC19GE_GLOBAL_TRANSFORM->rot_scale->m00,
       NC19GE_GLOBAL_TRANSFORM->rot_scale->m01
   );
+  t[99] = '\0';
   print(0, 3, t, 0);
 
-  snprintf(t, 100, "      [%f %f]",
+  sprintf(t, "      [%f %f]",
       NC19GE_GLOBAL_TRANSFORM->rot_scale->m10,
       NC19GE_GLOBAL_TRANSFORM->rot_scale->m11
   );
+  t[99] = '\0';
   print(0, 4, t, 0);
 
-  snprintf(t, 100, "trnsl [%f %f]",
+  sprintf(t, "trnsl [%f %f]",
       NC19GE_GLOBAL_TRANSFORM->translate->x,
       NC19GE_GLOBAL_TRANSFORM->translate->y
   );
+  t[99] = '\0';
   print(0, 6, t, 0);
 }
 

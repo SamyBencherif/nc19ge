@@ -12,4 +12,4 @@ library src/ include/:
 	$(AR) $(ARFLAGS) bin/libnc19ge.a bin/nc19ge.o
 
 examples examples/: library
-	$(CC) $(CFLAGS) -o bin/frogs -Lbin -lncurses -lnc19ge -I include examples/frogs.c
+	$(CC) $(CFLAGS) -o bin/frogs -Lbin -I include examples/frogs.c -lncurses -lnc19ge -lm

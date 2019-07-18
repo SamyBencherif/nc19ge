@@ -5,6 +5,9 @@
 #include <ncurses.h>
 
 #include <math.h>
+#ifndef M_PI
+  #define M_PI 3.1415926535897
+#endif
 
 #include "nc19ge.h"
 
@@ -238,8 +241,9 @@ void draw()
    */
 
   vec2 h;
-  for (int x=0; x<NC19GE_GLOBAL_SCREEN_INFO->cols; x++)
-    for (int y=0; y<NC19GE_GLOBAL_SCREEN_INFO->rows; y++)
+  int x, y;
+  for (x=0; x<NC19GE_GLOBAL_SCREEN_INFO->cols; x++)
+    for (y=0; y<NC19GE_GLOBAL_SCREEN_INFO->rows; y++)
     {
       /* Center world coords in screen */
       h.x = x - NC19GE_GLOBAL_SCREEN_INFO->cols/2 + .5;
