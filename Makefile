@@ -8,8 +8,8 @@ ARFLAGS=-rs
 all: examples
 
 library src/ include/:
-	$(CC) $(CFLAGS) -o bin/nc19ge.o -Iinclude -c src/nc19ge.c
-	$(AR) $(ARFLAGS) bin/libnc19ge.a bin/nc19ge.o
+	$(CC) $(CFLAGS) -o bin/ncknge.o -Iinclude -c src/ncknge.c
+	$(AR) $(ARFLAGS) bin/libncknge.a bin/ncknge.o
 
 examples examples/: library
-	$(CC) $(CFLAGS) -o bin/frogs -Lbin -I include examples/frogs.c -lncurses -lnc19ge -lm
+	$(CC) $(CFLAGS) -o bin/frogs -Lbin -I include examples/frogs.c -lncurses -lncknge -lm

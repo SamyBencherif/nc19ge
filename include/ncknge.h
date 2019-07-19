@@ -134,9 +134,9 @@ typedef enum {
  * @body these structures should only be directly accessed from the
  * module itself.
  */
-transform* NC19GE_GLOBAL_TRANSFORM;
-screen_info* NC19GE_GLOBAL_SCREEN_INFO;
-view_model* NC19GE_GLOBAL_VIEW_MODEL;
+transform* NCKNGE_GLOBAL_TRANSFORM;
+screen_info* NCKNGE_GLOBAL_SCREEN_INFO;
+view_model* NCKNGE_GLOBAL_VIEW_MODEL;
 
 /*
  * Default is BLOCK

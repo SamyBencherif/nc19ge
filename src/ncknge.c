@@ -9,7 +9,7 @@
   #define M_PI 3.1415926535897
 #endif
 
-#include "nc19ge.h"
+#include "ncknge.h"
 
 /* @begin data structures */
 
@@ -48,7 +48,7 @@ mat4x4* mat4x4_identity()
 
 /* transform */
 
-transform* NC19GE_GLOBAL_TRANSFORM;
+transform* NCKNGE_GLOBAL_TRANSFORM;
 
 transform* transform_new()
 {
@@ -225,7 +225,7 @@ view_component* view_model_insert(view_model* vm, view_component* c)
 
 void* view_component_add(view_component* c)
 {
-  return view_model_insert(NC19GE_GLOBAL_VIEW_MODEL, c)->fields;
+  return view_model_insert(NCKNGE_GLOBAL_VIEW_MODEL, c)->fields;
 }
 
 /* @end data structures */
@@ -242,18 +242,18 @@ void draw()
 
   vec2 h;
   int x, y;
-  for (x=0; x<NC19GE_GLOBAL_SCREEN_INFO->cols; x++)
-    for (y=0; y<NC19GE_GLOBAL_SCREEN_INFO->rows; y++)
+  for (x=0; x<NCKNGE_GLOBAL_SCREEN_INFO->cols; x++)
+    for (y=0; y<NCKNGE_GLOBAL_SCREEN_INFO->rows; y++)
     {
       /* Center world coords in screen */
-      h.x = x - NC19GE_GLOBAL_SCREEN_INFO->cols/2 + .5;
-      h.y = y - NC19GE_GLOBAL_SCREEN_INFO->rows/2 + .5;
+      h.x = x - NCKNGE_GLOBAL_SCREEN_INFO->cols/2 + .5;
+      h.y = y - NCKNGE_GLOBAL_SCREEN_INFO->rows/2 + .5;
 
       /* Perform aspect corrections */
       h.y *= BLOCK_ASPECT;
 
       /* Apply view port transformation */
-      transform_apply(NC19GE_GLOBAL_TRANSFORM, &h);
+      transform_apply(NCKNGE_GLOBAL_TRANSFORM, &h);
 
       pix(
            x,
@@ -263,7 +263,7 @@ void draw()
 
       view_component* c;
       for (
-            c = NC19GE_GLOBAL_VIEW_MODEL->tail;
+            c = NCKNGE_GLOBAL_VIEW_MODEL->tail;
             c != NULL;
             c = c->postrender
           )
@@ -294,7 +294,7 @@ void pix(int x, int y, int color)
   /* The color pairs correspond to the color constants */
   color_set(color+1, NULL);
 
-  mvaddch(NC19GE_GLOBAL_SCREEN_INFO->rows-y-1, x, ' ');
+  mvaddch(NCKNGE_GLOBAL_SCREEN_INFO->rows-y-1, x, ' ');
 }
 
 void execute(void setup(), void update(), void key(char k))
@@ -340,9 +340,9 @@ void execute(void setup(), void update(), void key(char k))
 
   /* NCURSES is initialized */
 
-  NC19GE_GLOBAL_TRANSFORM = transform_new();
-  NC19GE_GLOBAL_SCREEN_INFO = screen_info_get();
-  NC19GE_GLOBAL_VIEW_MODEL = view_model_new();
+  NCKNGE_GLOBAL_TRANSFORM = transform_new();
+  NCKNGE_GLOBAL_SCREEN_INFO = screen_info_get();
+  NCKNGE_GLOBAL_VIEW_MODEL = view_model_new();
 
   setup();
 
@@ -370,7 +370,7 @@ void execute(void setup(), void update(), void key(char k))
 
   /*
    * @todo deallocate global objects
-   * @body namely NC19GE_GLOBAL_...
+   * @body namely NCKNGE_GLOBAL_...
    */
 
   endwin();
