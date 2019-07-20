@@ -263,6 +263,7 @@ void draw()
       h.y = y - NCKNGE_GLOBAL_SCREEN_INFO->rows/2 + .5;
 
       /* Perform aspect corrections */
+      /* DEPRECATED (Currently set to multiply by 1)  */
       h.y *= BLOCK_ASPECT;
 
       /* Apply view port transformation */
@@ -275,6 +276,9 @@ void draw()
          );
 
       component* c;
+      /*
+       * @todo rename VIEW_MODEL
+       */
       for (
             c = NCKNGE_GLOBAL_VIEW_MODEL->tail;
             c != NULL;
@@ -284,9 +288,11 @@ void draw()
         /*
          * @todo optimize redraw
          * @body currently will set all pixels to the designated future value, instead it should set only if the future value is different from the present value.
-         * @body here is a second line.
-         */
+         * @body here is a second line.*/
 
+        /*
+         * &h would have c->transform applied to it once it is implemented
+         */
         color p = c->peek(c, &h);
         if (p != CLEAR)
           pix(x, y, p);

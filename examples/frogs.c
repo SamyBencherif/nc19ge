@@ -80,6 +80,19 @@ void key(char k)
   if (k == 'w') {
     transform_translate(NCKNGE_GLOBAL_TRANSFORM, vec2_new(0, 1));
     frog->y += 1;
+
+    /*  After implementing local translations and other considerations,
+     *  this code should become
+     *
+     *  (camera is a macro for NCKNGE_GLOBAL_TRANSFORM)
+     *
+     *  transform_translate(camera, UP);
+     *  transform_itranslate(frog->transform, UP);
+     *
+     *  @todo delete issue about removing GLOBALS from ncknge header
+     *  they are now to be used in client code, via macros
+     *
+     */
   }
   if (k == 's') {
     transform_translate(NCKNGE_GLOBAL_TRANSFORM, vec2_new(0, -1));

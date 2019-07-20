@@ -62,7 +62,13 @@ typedef struct {
    */
 
   mat4x4* rot; /* @todo implement */
-  mat4x4* scale; /* @todo implement */
+  mat4x4* _scale; /* @todo implement */
+  /*
+   * float scale -> float zoom
+   * mat4x4 _scale -> mat4x4 scale
+   *
+   *
+   */
 
   mat4x4* rot_scale;
 
@@ -88,6 +94,25 @@ typedef struct {
 typedef struct vc {
   color (*peek)(struct vc* c, vec2* v);
   void* fields;
+  /* @todo add transform here */
+
+  /*
+   * Local transforms can behave exactly like the global one.
+   * Although functions like transform_translate which frame movements
+   * as though they are movements of a camera would be less useful.
+   *
+   * I would rather think about moving and rotating the object in it's
+   * own space, rather than a conceptual centered camera about it.
+   *
+   * This will require implementation of functions like
+   * transform_inv_translate()
+   *
+   * which will simply invert the vector before applying it.
+   *
+   * maybe it is better to simply let the user include the required
+   * negations.
+   */
+
   struct vc* prerender;
   struct vc* postrender;
 } component;
