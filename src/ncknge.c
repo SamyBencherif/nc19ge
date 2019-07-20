@@ -15,6 +15,12 @@
 
 /* vec2 */
 
+/*  @todo use compass rose
+ *  In documentation, code, and constants refer to screenspace
+ *  orientation and world space orientation with UP, RIGHT, LEFT,
+ *  DOWN and NORTH, EAST, WEST, SOUTH respectively.
+ */
+
 vec2* vec2_zero()
 {
   vec2* v;
@@ -85,6 +91,10 @@ void transform_set(transform* t, vec2* pos, float angle, float scale)
 
 }
 
+/*
+ *  Affects the transform in screen space, preforming a translation
+ *
+ */
 void transform_translate(transform* t, vec2* v)
 {
   transform_apply(t, v);
@@ -92,6 +102,9 @@ void transform_translate(transform* t, vec2* v)
   t->translate->y = v->y;
 }
 
+/*
+ * Applies the transformation to the vector
+ */
 void transform_apply(transform* t, vec2* v)
 {
 
@@ -130,7 +143,7 @@ screen_info* screen_info_get()
 
 /* quad */
 
-color quad_peek(view_component* c, vec2* v)
+color quad_peek(component* c, vec2* v)
 {
   quad* q = c->fields;
   if (q->x <= v->x && q->x + q->w > v->x &&
@@ -140,9 +153,9 @@ color quad_peek(view_component* c, vec2* v)
     return CLEAR;
 }
 
-view_component* quad_new(float x, float y, float w, float h, color color)
+component* quad_new(float x, float y, float w, float h, color color)
 {
-  view_component* c = malloc(sizeof(view_component));
+  component* c = malloc(sizeof(component));
 
   quad* q = malloc(sizeof(quad));
   q->x = x;
@@ -159,7 +172,7 @@ view_component* quad_new(float x, float y, float w, float h, color color)
 
 /* ellipse */
 
-color ellipse_peek(view_component* c, vec2* v)
+color ellipse_peek(component* c, vec2* v)
 {
   ellipse* e = c->fields;
   if (pow(v->x - e->x, 2) / pow(e->w, 2) +
@@ -173,9 +186,9 @@ color ellipse_peek(view_component* c, vec2* v)
   }
 }
 
-view_component* ellipse_new(float x, float y, float w, float h, color color)
+component* ellipse_new(float x, float y, float w, float h, color color)
 {
-  view_component* c = malloc(sizeof(view_component));
+  component* c = malloc(sizeof(component));
 
   ellipse* e = malloc(sizeof(ellipse));
   e->x = x;
@@ -190,7 +203,7 @@ view_component* ellipse_new(float x, float y, float w, float h, color color)
   return c;
 }
 
-void view_component_free(view_component* c)
+void component_free(component* c)
 {
   free(c->fields);
   free(c);
@@ -199,15 +212,15 @@ void view_component_free(view_component* c)
 /* view model */
 
 
-view_model* view_model_new()
+world_model* world_model_new()
 {
-  view_model* vm = malloc(sizeof(view_model));
+  world_model* vm = malloc(sizeof(world_model));
   vm->head = NULL;
   vm->tail = NULL;
   return vm;
 }
 
-view_component* view_model_insert(view_model* vm, view_component* c)
+component* world_model_insert(world_model* vm, component* c)
 {
   if (vm->head == NULL)
   {
@@ -223,9 +236,9 @@ view_component* view_model_insert(view_model* vm, view_component* c)
   return c;
 }
 
-void* view_component_add(view_component* c)
+void* component_add(component* c)
 {
-  return view_model_insert(NCKNGE_GLOBAL_VIEW_MODEL, c)->fields;
+  return world_model_insert(NCKNGE_GLOBAL_VIEW_MODEL, c)->fields;
 }
 
 /* @end data structures */
@@ -261,7 +274,7 @@ void draw()
            COLOR_BLACK
          );
 
-      view_component* c;
+      component* c;
       for (
             c = NCKNGE_GLOBAL_VIEW_MODEL->tail;
             c != NULL;
@@ -342,7 +355,7 @@ void execute(void setup(), void update(), void key(char k))
 
   NCKNGE_GLOBAL_TRANSFORM = transform_new();
   NCKNGE_GLOBAL_SCREEN_INFO = screen_info_get();
-  NCKNGE_GLOBAL_VIEW_MODEL = view_model_new();
+  NCKNGE_GLOBAL_VIEW_MODEL = world_model_new();
 
   setup();
 

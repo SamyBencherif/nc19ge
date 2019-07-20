@@ -54,7 +54,18 @@ mat4x4* mat4x4_identity();
 
 typedef struct {
   vec2* translate;
+
+  /*
+   *  The 3 matrices shall be updated in tandom
+   *  @todo (feature) add compile flag to spec which mats are needed
+   *
+   */
+
+  mat4x4* rot; /* @todo implement */
+  mat4x4* scale; /* @todo implement */
+
   mat4x4* rot_scale;
+
   float angle;
   float scale;
 } transform;
@@ -79,7 +90,7 @@ typedef struct vc {
   void* fields;
   struct vc* prerender;
   struct vc* postrender;
-} view_component;
+} component;
 
 /* specific view components */
 
@@ -93,8 +104,8 @@ typedef struct {
   color color;
 } quad;
 
-color quad_peek(view_component* c, vec2* v);
-view_component* quad_new(float x, float y, float w, float h, color color);
+color quad_peek(component* c, vec2* v);
+component* quad_new(float x, float y, float w, float h, color color);
 
     /** ellipse **/
 
@@ -106,21 +117,21 @@ typedef struct {
   color color;
 } ellipse;
 
-color ellipse_peek(view_component* c, vec2* v);
-view_component* ellipse_new(float x, float y, float w, float h, color color);
+color ellipse_peek(component* c, vec2* v);
+component* ellipse_new(float x, float y, float w, float h, color color);
 
-/* view model (uses view_components) */
+/* view model (uses components) */
 
 typedef struct{
-  view_component* head;
-  view_component* tail;
-} view_model;
+  component* head;
+  component* tail;
+} world_model;
 
-view_model* view_model_new();
-view_component* view_model_insert(view_model* vm, view_component* c);
-void view_model_free(view_model* vm);
+world_model* world_model_new();
+component* world_model_insert(world_model* vm, component* c);
+void world_model_free(world_model* vm);
 
-void* view_component_add(view_component* c);
+void* component_add(component* c);
 
 typedef enum {
   BLOCK,
@@ -136,7 +147,7 @@ typedef enum {
  */
 transform* NCKNGE_GLOBAL_TRANSFORM;
 screen_info* NCKNGE_GLOBAL_SCREEN_INFO;
-view_model* NCKNGE_GLOBAL_VIEW_MODEL;
+world_model* NCKNGE_GLOBAL_VIEW_MODEL;
 
 /*
  * Default is BLOCK

@@ -26,10 +26,10 @@ void setup()
    * and
    * word_component_add
    */
-  view_component_add(quad_new(0,0,4,4,YELLOW));
-  view_component_add(quad_new(4,0,4,4,RED));
-  view_component_add(quad_new(0,4,4,4,BLUE));
-  frog = view_component_add(ellipse_new(0,0,4,1, GREEN));
+  component_add(quad_new(0,0,4,4,YELLOW));
+  component_add(quad_new(4,0,4,4,RED));
+  component_add(quad_new(0,4,4,4,BLUE));
+  frog = component_add(ellipse_new(0,0,4,1, GREEN));
 }
 
 void update()
@@ -71,6 +71,11 @@ void key(char k)
    * rot_scale analog, but matrix inversing might not be too
    * difficult either.
    *
+   */
+
+  /*
+   * With new language, it is clear that the frog is moving
+   * North instead of UP when I press w
    */
   if (k == 'w') {
     transform_translate(NCKNGE_GLOBAL_TRANSFORM, vec2_new(0, 1));
