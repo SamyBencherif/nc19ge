@@ -88,7 +88,6 @@ void transform_set(transform* t, vec2* pos, float angle, float scale)
   t->rot_scale->m01 = -scale*sin(angle);
   t->rot_scale->m10 = scale*sin(angle);
   t->rot_scale->m11 = scale*cos(angle);
-
 }
 
 /*
@@ -166,6 +165,7 @@ component* quad_new(float x, float y, float w, float h, color color)
 
   c->fields = q;
   c->peek = quad_peek;
+  c->local_transform = transform_new();
 
   return c;
 }
@@ -199,6 +199,7 @@ component* ellipse_new(float x, float y, float w, float h, color color)
 
   c->fields = e;
   c->peek = ellipse_peek;
+  c->local_transform = transform_new();
 
   return c;
 }
@@ -236,9 +237,9 @@ component* world_model_insert(world_model* vm, component* c)
   return c;
 }
 
-void* component_add(component* c)
+component* component_add(component* c)
 {
-  return world_model_insert(NCKNGE_GLOBAL_VIEW_MODEL, c)->fields;
+  return world_model_insert(NCKNGE_GLOBAL_WORLD_MODEL, c);
 }
 
 /* @end data structures */
@@ -258,17 +259,6 @@ void draw()
   for (x=0; x<NCKNGE_GLOBAL_SCREEN_INFO->cols; x++)
     for (y=0; y<NCKNGE_GLOBAL_SCREEN_INFO->rows; y++)
     {
-      /* Center world coords in screen */
-      h.x = x - NCKNGE_GLOBAL_SCREEN_INFO->cols/2 + .5;
-      h.y = y - NCKNGE_GLOBAL_SCREEN_INFO->rows/2 + .5;
-
-      /* Perform aspect corrections */
-      /* DEPRECATED (Currently set to multiply by 1)  */
-      h.y *= BLOCK_ASPECT;
-
-      /* Apply view port transformation */
-      transform_apply(NCKNGE_GLOBAL_TRANSFORM, &h);
-
       pix(
            x,
            y,
@@ -280,19 +270,32 @@ void draw()
        * @todo rename VIEW_MODEL
        */
       for (
-            c = NCKNGE_GLOBAL_VIEW_MODEL->tail;
+            c = NCKNGE_GLOBAL_WORLD_MODEL->tail;
             c != NULL;
             c = c->postrender
           )
       {
         /*
          * @todo optimize redraw
-         * @body currently will set all pixels to the designated future value, instead it should set only if the future value is different from the present value.
-         * @body here is a second line.*/
-
-        /*
-         * &h would have c->transform applied to it once it is implemented
+         * @body currently will set all pixels to the designated future
+         * value, instead it should set only if the future value is
+         * different from the present value.
          */
+
+        /* Center world coords in screen */
+        h.x = x - NCKNGE_GLOBAL_SCREEN_INFO->cols/2 + .5;
+        h.y = y - NCKNGE_GLOBAL_SCREEN_INFO->rows/2 + .5;
+
+        /* Perform aspect corrections */
+        /* DEPRECATED (Currently set to multiply by 1)  */
+        h.y *= BLOCK_ASPECT;
+
+        /* Apply viewport transform */
+        transform_apply(NCKNGE_GLOBAL_TRANSFORM, &h);
+
+        /* Apply local transform */
+        transform_apply(c->local_transform, &h);
+
         color p = c->peek(c, &h);
         if (p != CLEAR)
           pix(x, y, p);
@@ -300,15 +303,15 @@ void draw()
     }
 }
 
-void print(int x, int y, char* string, int color)
+void print(int x, int y, char* string, color color)
 {
   /* color is ignored unless NGLB_COL_MOD is TEXT */
-  color_set(1, NULL);
+  color_set(color, NULL);
 
   mvaddstr(y, x, string);
 }
 
-void pix(int x, int y, int color)
+void pix(int x, int y, color color)
 {
   /* The color pairs correspond to the color constants */
   color_set(color+1, NULL);
@@ -361,7 +364,7 @@ void execute(void setup(), void update(), void key(char k))
 
   NCKNGE_GLOBAL_TRANSFORM = transform_new();
   NCKNGE_GLOBAL_SCREEN_INFO = screen_info_get();
-  NCKNGE_GLOBAL_VIEW_MODEL = world_model_new();
+  NCKNGE_GLOBAL_WORLD_MODEL = world_model_new();
 
   setup();
 

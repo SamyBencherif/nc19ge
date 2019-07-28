@@ -12,7 +12,7 @@ vec2* pos;
 float angle = 0;
 float scale = 1;
 
-ellipse* frog;
+component* frog;
 
 void setup()
 {
@@ -64,22 +64,11 @@ void update()
 void key(char k)
 {
   /*
-   * @todo objects should have their own transforms
-   * @body thus would do away with most fields except for
-   * the point test function and the color field. The trasform
-   * would need to be inverse. I am thinking to inverse via
-   * rot_scale analog, but matrix inversing might not be too
-   * difficult either.
-   *
-   */
-
-  /*
    * With new language, it is clear that the frog is moving
    * North instead of UP when I press w
    */
   if (k == 'w') {
     transform_translate(NCKNGE_GLOBAL_TRANSFORM, vec2_new(0, 1));
-    frog->y += 1;
 
     /*  After implementing local translations and other considerations,
      *  this code should become
@@ -96,15 +85,12 @@ void key(char k)
   }
   if (k == 's') {
     transform_translate(NCKNGE_GLOBAL_TRANSFORM, vec2_new(0, -1));
-    frog->y -= 1;
   }
   if (k == 'a') {
     transform_translate(NCKNGE_GLOBAL_TRANSFORM, vec2_new(-1, 0));
-    frog->x -= 1;
   }
   if (k == 'd') {
     transform_translate(NCKNGE_GLOBAL_TRANSFORM, vec2_new(1, 0));
-    frog->x += 1;
   }
   if (k == 'q') {
     angle += M_PI/12;
@@ -120,6 +106,7 @@ void key(char k)
   }
 
   transform_set(NCKNGE_GLOBAL_TRANSFORM, pos, angle, scale);
+  transform_set(frog->local_transform, pos, angle, scale);
 
 }
 
