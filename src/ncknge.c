@@ -68,29 +68,34 @@ transform* transform_new()
   return t;
 }
 
-/* DEPRECATED */
-void transform_set(transform* t, vec2* pos, float angle, float scale)
+/*
+* t->mat4x4 =
+*
+* [ s*cos(a)  -s*sin(a) ]
+* [ s*sin(a)   s*cos(a) ]
+*
+* m00 m01
+* m10 m11
+*/
+void transform_update_mat(transform* t)
 {
-  t->translate = pos;
-  t->angle = angle;
-  t->scale = scale;
-
-  /*
-   * t->mat4x4 =
-   *
-   * [ s*cos(a)  -s*sin(a) ]
-   * [ s*sin(a)   s*cos(a) ]
-   *
-   * m00 m01
-   * m10 m11
-   */
-
   t->rot_scale->m00 = scale*cos(angle);
   t->rot_scale->m01 = -scale*sin(angle);
   t->rot_scale->m10 = scale*sin(angle);
   t->rot_scale->m11 = scale*cos(angle);
 }
 
+void transform_set_angle(transform* t, float angle)
+{
+  t->angle = angle;
+  transform_update_mat(t);
+}
+
+void transform_set_scale(transform* t, float scale)
+{
+  t->scale = scale;
+  transform_update_mat(t);
+}
 
 /*
  * Applies the transformation to the vector

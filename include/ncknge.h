@@ -63,6 +63,9 @@ typedef struct {
 
 transform* transform_new();
 
+void transform_set_angle(transform* t, float angle);
+void transform_set_scale(transform* t, float scale);
+
 /* used to apply transform to imaginary camera */
 void transform_apply(transform* t, vec2* v);
 
@@ -142,6 +145,8 @@ typedef enum {
  * module itself.
  */
 transform* NCKNGE_GLOBAL_TRANSFORM;
+#define camera NCKNGE_GLOBAL_TRANSFORM
+
 screen_info* NCKNGE_GLOBAL_SCREEN_INFO;
 world_model* NCKNGE_GLOBAL_WORLD_MODEL;
 

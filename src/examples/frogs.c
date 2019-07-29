@@ -8,18 +8,10 @@
   #define M_PI 3.1415926535897
 #endif
 
-vec2* pos;
-float angle = 0;
-float scale = 1;
-
 component* frog;
 
 void setup()
 {
-  pos = vec2_new(0, 0);
-
-  transform_set(NCKNGE_GLOBAL_TRANSFORM, pos, angle, scale);
-
   /*
    * @todo seperate component_add funcs
    * I am planning to have two sister functions
@@ -83,19 +75,19 @@ void key(char k)
      */
 
   if (k == 'w') {
-    NCKNGE_GLOBAL_TRANSFORM->translate->y += 1;
+    camera->translate->y += 1;
   }
   if (k == 's') {
-    NCKNGE_GLOBAL_TRANSFORM->translate->y -= 1;
+    camera->translate->y -= 1;
   }
   if (k == 'a') {
-    NCKNGE_GLOBAL_TRANSFORM->translate->x -= 1;
+    camera->translate->x -= 1;
   }
   if (k == 'd') {
-    NCKNGE_GLOBAL_TRANSFORM->translate->x += 1;
+    camera->translate->x += 1;
   }
   if (k == 'q') {
-    angle += M_PI/12;
+    transform_set_angle(camera, camera->transform->angle + M_PI/12);
   }
   if (k == 'e') {
     angle -= M_PI/12;
@@ -106,7 +98,6 @@ void key(char k)
   if (k == 'f') {
     scale -= .1;
   }
-  transform_iset(frog->local_transform, pos, 0, 1);
 }
 
 int main(int argc, char** argv) {
