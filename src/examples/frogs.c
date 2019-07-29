@@ -87,16 +87,16 @@ void key(char k)
     camera->translate->x += 1;
   }
   if (k == 'q') {
-    transform_set_angle(camera, camera->transform->angle + M_PI/12);
+    transform_set_angle(camera, camera->angle + M_PI/12);
   }
   if (k == 'e') {
-    angle -= M_PI/12;
+    transform_set_angle(camera, camera->angle - M_PI/12);
   }
   if (k == 'r') {
-    scale += .1;
+    transform_set_scale(camera, camera->scale + .1);
   }
   if (k == 'f') {
-    scale -= .1;
+    transform_set_scale(camera, camera->scale - .1);
   }
 }
 

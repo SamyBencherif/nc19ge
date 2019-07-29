@@ -79,6 +79,8 @@ transform* transform_new()
 */
 void transform_update_mat(transform* t)
 {
+  float scale = t->scale;
+  float angle = t->angle;
   t->rot_scale->m00 = scale*cos(angle);
   t->rot_scale->m01 = -scale*sin(angle);
   t->rot_scale->m10 = scale*sin(angle);
@@ -98,10 +100,13 @@ void transform_set_scale(transform* t, float scale)
 }
 
 /*
- * Applies the transformation to the vector
+ * Applies the inverse of the transformation to the vector
  */
-void transform_apply(transform* t, vec2* v)
+void transform_apply_inv(transform* t, vec2* v)
 {
+
+  v->x = v->x + t->translate->x;
+  v->y = v->y + t->translate->y;
 
   /*
    * Stop. These lines are not independant.
@@ -111,8 +116,25 @@ void transform_apply(transform* t, vec2* v)
   v->x = x;
   v->y = y;
 
+}
+
+/*
+ * Applies the transformation to the vector
+ */
+void transform_apply(transform* t, vec2* v)
+{
+
   v->x = v->x + t->translate->x;
   v->y = v->y + t->translate->y;
+
+  /*
+   * Stop. These lines are not independant.
+   */
+  float x = v->x * t->rot_scale->m00 + v->y * t->rot_scale->m01;
+  float y = v->x * t->rot_scale->m10 + v->y * t->rot_scale->m11;
+  v->x = x;
+  v->y = y;
+
 }
 
 void transform_free(transform* t)
@@ -290,7 +312,7 @@ void draw()
         transform_apply(NCKNGE_GLOBAL_TRANSFORM, &h);
 
         /* Apply local transform */
-        transform_apply(c->local_transform, &h);
+        transform_apply_inv(c->local_transform, &h);
 
         color p = c->peek(c, &h);
         if (p != CLEAR)
