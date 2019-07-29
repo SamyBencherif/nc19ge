@@ -99,20 +99,29 @@ void transform_set_scale(transform* t, float scale)
   transform_update_mat(t);
 }
 
+void transform_displace(transform* t, float dx, float dy)
+{
+  t->translate->x += dx*cos(-t->angle) + dy*sin(-t->angle);
+  t->translate->y += dx*cos(-t->angle + M_PI/2.) +
+                                          dy*sin(-t->angle + M_PI/2.);
+}
+
 /*
  * Applies the inverse of the transformation to the vector
  */
 void transform_apply_inv(transform* t, vec2* v)
 {
+  v->x = v->x - t->translate->x;
+  v->y = v->y - t->translate->y;
 
-  v->x = v->x + t->translate->x;
-  v->y = v->y + t->translate->y;
+  float det = (t->rot_scale->m00*t->rot_scale->m11 -
+               t->rot_scale->m10*t->rot_scale->m01);
+  float x = v->x * t->rot_scale->m11 - v->y * t->rot_scale->m01;
+  float y = - v->x * t->rot_scale->m10 + v->y * t->rot_scale->m00;
 
-  /*
-   * Stop. These lines are not independant.
-   */
-  float x = v->x * t->rot_scale->m00 + v->y * t->rot_scale->m01;
-  float y = v->x * t->rot_scale->m10 + v->y * t->rot_scale->m11;
+  x /= det;
+  y /= det;
+
   v->x = x;
   v->y = y;
 
@@ -124,9 +133,6 @@ void transform_apply_inv(transform* t, vec2* v)
 void transform_apply(transform* t, vec2* v)
 {
 
-  v->x = v->x + t->translate->x;
-  v->y = v->y + t->translate->y;
-
   /*
    * Stop. These lines are not independant.
    */
@@ -134,6 +140,9 @@ void transform_apply(transform* t, vec2* v)
   float y = v->x * t->rot_scale->m10 + v->y * t->rot_scale->m11;
   v->x = x;
   v->y = y;
+
+  v->x = v->x + t->translate->x;
+  v->y = v->y + t->translate->y;
 
 }
 
@@ -183,7 +192,7 @@ component* quad_new(float x, float y, float w, float h, color color)
 
   c->fields = q;
   c->peek = quad_peek;
-  c->local_transform = transform_new();
+  c->transform = transform_new();
 
   return c;
 }
@@ -217,7 +226,145 @@ component* ellipse_new(float x, float y, float w, float h, color color)
 
   c->fields = e;
   c->peek = ellipse_peek;
-  c->local_transform = transform_new();
+  c->transform = transform_new();
+
+  return c;
+}
+
+/* bitmap */
+
+color bitmap_peek(component* c, vec2* v)
+{
+  v->y /= BLOCK_ASPECT;
+  bitmap* b = c->fields;
+  float im_vcoord_x = (v->x - b->x) / b->w;
+  float im_vcoord_y = (v->y - b->y) / b->h;
+  if (im_vcoord_x >= 0 && im_vcoord_x < 1 && im_vcoord_y >= 0 &&
+      im_vcoord_y < 1)
+  {
+    int img_x = (im_vcoord_x * b->img_width);
+    int img_y = (im_vcoord_y * b->img_height);
+
+    return b->pixels[img_x + b->img_width * img_y];
+  }
+  else
+    return CLEAR;
+}
+
+color char_to_color(char c)
+{
+  switch (c)
+  {
+    case '0':
+      return BLACK;
+    case '1':
+      return BLUE;
+    case '2':
+      return RED;
+    case '3':
+      return MAGENTA;
+    case '4':
+      return GREEN;
+    case '5':
+      return YELLOW;
+    case '6':
+      return CYAN;
+    case '7':
+      return WHITE;
+  }
+  return CLEAR;
+}
+
+component* bitmap_from_file(char* filename)
+{
+  FILE* bmp_file = fopen(filename, "r");
+
+  int c = 0;
+  int row_len = 0;
+  int col_count = 0;
+  int row_count = 0;
+
+  while (c != EOF)
+  {
+    while (c != '\n' && c != EOF)
+    {
+      row_len += 1;
+      c = fgetc(bmp_file);
+    }
+
+    if (row_len > col_count)
+    {
+      col_count = row_len;
+    }
+
+    c = fgetc(bmp_file);
+    row_count += 1;
+  }
+
+  color* pixels = malloc(row_count * col_count * sizeof(color));
+
+  rewind(bmp_file);
+  c = 0;
+  int i=0;
+
+  while (c != EOF)
+  {
+    while (c != '\n' && c != EOF)
+    {
+      c = fgetc(bmp_file);
+      i++;
+      pixels[i] = char_to_color(c);
+    }
+    c = fgetc(bmp_file);
+  }
+
+  fclose(bmp_file);
+
+  component* cmp = malloc(sizeof(component));
+  bitmap* b = malloc(sizeof(bitmap));
+
+  b->x = 0;
+  b->y = 0;
+  b->w = col_count;
+  b->h = row_count;
+
+  b->img_width = col_count;
+  b->img_height = row_count;
+
+  b->pixels = pixels;
+
+  cmp->fields = b;
+  cmp->peek = bitmap_peek;
+  cmp->transform = transform_new();
+
+  return cmp;
+}
+
+component* bitmap_create(int img_width, int img_height, char* img_str)
+{
+
+  component* c = malloc(sizeof(component));
+  bitmap* b = malloc(sizeof(bitmap));
+
+  b->x = 0;
+  b->y = 0;
+  b->w = img_width;
+  b->h = img_height;
+
+  b->img_width = img_width;
+  b->img_height = img_height;
+
+  b->pixels = malloc(sizeof(color) * img_width * img_height);
+
+  int i;
+  for (i=0; i < img_width * img_height; i ++)
+  {
+    b->pixels[i] = char_to_color(img_str[i]);
+  }
+
+  c->fields = b;
+  c->peek = bitmap_peek;
+  c->transform = transform_new();
 
   return c;
 }
@@ -308,11 +455,16 @@ void draw()
         /* DEPRECATED (Currently set to multiply by 1)  */
         h.y *= BLOCK_ASPECT;
 
+        /*
+         * The order of the next two lines matters! They are not quite
+         * linear transformations (translate is included).
+         */
+
         /* Apply viewport transform */
         transform_apply(NCKNGE_GLOBAL_TRANSFORM, &h);
 
         /* Apply local transform */
-        transform_apply_inv(c->local_transform, &h);
+        transform_apply_inv(c->transform, &h);
 
         color p = c->peek(c, &h);
         if (p != CLEAR)

@@ -13,6 +13,7 @@ library src/ include/:
 
 examples examples/:
 	$(CC) $(CFLAGS) -o bin/examples/frogs -Lbin -I include src/examples/frogs.c -lncurses -lncknge -lm
+	$(CC) $(CFLAGS) -o bin/examples/bmp-view -Lbin -I include src/examples/bmp-view.c -lncurses -lncknge -lm
 
 clean:
 	rm -r bin/*

@@ -3,8 +3,7 @@
 #include <ncurses.h>
 
 /* Set to 34/16 to perform aspect corrections */
-#define BLOCK_ASPECT 1
-
+#define BLOCK_ASPECT (34./16.)
 
 /*
  * @todo ensure all colors are of type color
@@ -65,6 +64,7 @@ transform* transform_new();
 
 void transform_set_angle(transform* t, float angle);
 void transform_set_scale(transform* t, float scale);
+void transform_displace(transform* t, float dx, float dy);
 
 /* used to apply transform to imaginary camera */
 void transform_apply(transform* t, vec2* v);
@@ -85,7 +85,7 @@ typedef struct vc {
   color (*peek)(struct vc* c, vec2* v);
   void* fields;
 
-  transform* local_transform;
+  transform* transform;
 
   struct vc* prerender;
   struct vc* postrender;
@@ -93,7 +93,7 @@ typedef struct vc {
 
 /* specific view components */
 
-    /** quad **/
+/** quad **/
 
 typedef struct {
   float x;
@@ -105,6 +105,7 @@ typedef struct {
 
 color quad_peek(component* c, vec2* v);
 component* quad_new(float x, float y, float w, float h, color color);
+void quad_free(quad* q);
 
 /** ellipse **/
 
@@ -118,6 +119,24 @@ typedef struct {
 
 color ellipse_peek(component* c, vec2* v);
 component* ellipse_new(float x, float y, float w, float h, color color);
+void ellipse_free(ellipse* e);
+
+/** bitmap **/
+
+typedef struct {
+  float x;
+  float y;
+  float w;
+  float h;
+  int img_width;
+  int img_height;
+  color* pixels;
+} bitmap;
+
+color bitmap_peek(component* c, vec2* v);
+component* bitmap_from_file(char* filename);
+component* bitmap_create(int img_width, int img_height, char* img_str);
+void bitmap_free(bitmap* b);
 
 /* view model (uses components) */
 

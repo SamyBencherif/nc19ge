@@ -8,33 +8,14 @@
   #define M_PI 3.1415926535897
 #endif
 
-component* frog;
 
 void setup()
 {
-  transform_set_scale(camera, .3);
-  /*
-   * @todo seperate component_add funcs
-   * I am planning to have two sister functions
-   * screen_component_add
-   * and
-   * word_component_add
-   */
-  component_add(quad_new(0,0,4,4,WHITE));
-  component_add(quad_new(8,0,4,4,WHITE));
-  component_add(quad_new(0,8,4,4,WHITE));
-  component_add(quad_new(8,8,4,4,WHITE));
+  component_add(bitmap_from_file("tester.kbm"));
+  transform_set_scale(camera, 1);
+  /* component* my_bmp = component_add(bitmap_create(10, 10, "1111111111222222222233333333334444444444555555555566666666667777777777111111111122222222223333333333"));
 
-  component_add(quad_new(5,0,2,2,RED));
-  component_add(quad_new(0,5,2,2,BLUE));
-
-  frog = component_add(ellipse_new(0,0,1,1, GREEN));
-
-  frog->transform->translate->x = -3;
-  frog->transform->translate->y = 3;
-
-  camera->translate->x = frog->transform->translate->x;
-  camera->translate->y = frog->transform->translate->y;
+  transform_displace(my_bmp->transform, -5, -5*BLOCK_ASPECT); */
 }
 
 void update()
@@ -70,29 +51,21 @@ void key(char k)
 {
   if (k == 'w') {
     transform_displace(camera, 0, 1);
-    transform_displace(frog->transform, 0, 1);
   }
   if (k == 's') {
     transform_displace(camera, 0, -1);
-    transform_displace(frog->transform, 0, -1);
   }
   if (k == 'a') {
     transform_displace(camera, -1, 0);
-    transform_displace(frog->transform, -1, 0);
   }
   if (k == 'd') {
     transform_displace(camera, 1, 0);
-    transform_displace(frog->transform, 1, 0);
   }
   if (k == 'q') {
     transform_set_angle(camera, camera->angle + M_PI/12);
-    transform_set_angle(frog->transform,
-        frog->transform->angle + M_PI/12);
   }
   if (k == 'e') {
     transform_set_angle(camera, camera->angle - M_PI/12);
-    transform_set_angle(frog->transform,
-        frog->transform->angle - M_PI/12);
   }
   if (k == 'r') {
     transform_set_scale(camera, camera->scale/1.1);
