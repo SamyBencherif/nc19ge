@@ -15,4 +15,4 @@ examples examples/:
 	$(CC) $(CFLAGS) -o bin/examples/frogs -Lbin -I include src/examples/frogs.c -lncurses -lncknge -lm
 
 clean:
-	rm bin/*
+	rm -r bin/*

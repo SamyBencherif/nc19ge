@@ -21,6 +21,7 @@ void setup()
   transform_set(NCKNGE_GLOBAL_TRANSFORM, pos, angle, scale);
 
   /*
+   * @todo seperate component_add funcs
    * I am planning to have two sister functions
    * screen_component_add
    * and
@@ -67,10 +68,8 @@ void key(char k)
    * With new language, it is clear that the frog is moving
    * North instead of UP when I press w
    */
-  if (k == 'w') {
-    transform_translate(NCKNGE_GLOBAL_TRANSFORM, vec2_new(0, 1));
 
-    /*  After implementing local translations and other considerations,
+  /*  After implementing local translations and other considerations,
      *  this code should become
      *
      *  (camera is a macro for NCKNGE_GLOBAL_TRANSFORM)
@@ -82,15 +81,18 @@ void key(char k)
      *  they are now to be used in client code, via macros
      *
      */
+
+  if (k == 'w') {
+    NCKNGE_GLOBAL_TRANSFORM->translate->y += 1;
   }
   if (k == 's') {
-    transform_translate(NCKNGE_GLOBAL_TRANSFORM, vec2_new(0, -1));
+    NCKNGE_GLOBAL_TRANSFORM->translate->y -= 1;
   }
   if (k == 'a') {
-    transform_translate(NCKNGE_GLOBAL_TRANSFORM, vec2_new(-1, 0));
+    NCKNGE_GLOBAL_TRANSFORM->translate->x -= 1;
   }
   if (k == 'd') {
-    transform_translate(NCKNGE_GLOBAL_TRANSFORM, vec2_new(1, 0));
+    NCKNGE_GLOBAL_TRANSFORM->translate->x += 1;
   }
   if (k == 'q') {
     angle += M_PI/12;
@@ -104,10 +106,7 @@ void key(char k)
   if (k == 'f') {
     scale -= .1;
   }
-
-  transform_set(NCKNGE_GLOBAL_TRANSFORM, pos, angle, scale);
-  transform_set(frog->local_transform, pos, angle, scale);
-
+  transform_iset(frog->local_transform, pos, 0, 1);
 }
 
 int main(int argc, char** argv) {

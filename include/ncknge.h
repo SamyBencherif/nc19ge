@@ -63,9 +63,11 @@ typedef struct {
 
 transform* transform_new();
 
-void transform_set(transform* t, vec2* pos, float angle, float scale);
-void transform_translate(transform* t, vec2* v);
+/* used to apply transform to imaginary camera */
 void transform_apply(transform* t, vec2* v);
+
+/* used to apply transform to component objects */
+void transform_apply_inv(transform* t, vec2* v);
 
 /* screen info */
 

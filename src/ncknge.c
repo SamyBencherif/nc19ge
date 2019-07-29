@@ -68,6 +68,7 @@ transform* transform_new()
   return t;
 }
 
+/* DEPRECATED */
 void transform_set(transform* t, vec2* pos, float angle, float scale)
 {
   t->translate = pos;
@@ -90,16 +91,6 @@ void transform_set(transform* t, vec2* pos, float angle, float scale)
   t->rot_scale->m11 = scale*cos(angle);
 }
 
-/*
- *  Affects the transform in screen space, preforming a translation
- *
- */
-void transform_translate(transform* t, vec2* v)
-{
-  transform_apply(t, v);
-  t->translate->x = v->x;
-  t->translate->y = v->y;
-}
 
 /*
  * Applies the transformation to the vector
