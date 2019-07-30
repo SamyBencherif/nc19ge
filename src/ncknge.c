@@ -304,16 +304,16 @@ component* bitmap_from_file(char* filename)
   color* pixels = malloc(row_count * col_count * sizeof(color));
 
   rewind(bmp_file);
-  c = 0;
+  c = fgetc(bmp_file);
   int i=0;
 
   while (c != EOF)
   {
     while (c != '\n' && c != EOF)
     {
+      pixels[i] = char_to_color(c);
       c = fgetc(bmp_file);
       i++;
-      pixels[i] = char_to_color(c);
     }
     c = fgetc(bmp_file);
   }
