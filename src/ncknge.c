@@ -349,7 +349,6 @@ component* bitmap_from_file(char* filename, component* dest)
 
   fclose(bmp_file);
 
-
   component* cmp;
   bitmap* b;
 
@@ -358,7 +357,6 @@ component* bitmap_from_file(char* filename, component* dest)
     cmp = malloc(sizeof(component));
 
     b = malloc(sizeof(bitmap));
-    b->pixels = pixels;
 
     cmp->fields = b;
     cmp->peek = bitmap_peek;
@@ -369,6 +367,8 @@ component* bitmap_from_file(char* filename, component* dest)
     cmp = dest;
     b = dest->fields;
   }
+
+  b->pixels = pixels;
 
   b->x = 0;
   b->y = 0;

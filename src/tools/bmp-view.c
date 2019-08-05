@@ -17,7 +17,7 @@ void setup()
   component_add(myBMP);
   transform_set_scale(camera, 1);
 
-  ttr = 5;
+  ttr = 1;
 }
 
 void update()
@@ -26,16 +26,22 @@ void update()
   print(0, 1, BLACK, "Use QE to adjust rotation.");
   print(0, 2, BLACK, "Use RF to set scale.");
 
-  if (ttr <= 3)
-  {
-    print(0, 5, YELLOW, "Reloading in %d...", (int) (ttr + .5));
-  }
+  print(0, 4, BLACK, "COLORS 0      1 2 3 4 5 6 7 \' \'");
+  print(0, 5, BLACK, "      (BLACK)               (CLEAR)");
+  print(14, 5, BLUE, " ");
+  print(16, 5, RED, " ");
+  print(18, 5, MAGENTA, " ");
+  print(20, 5, GREEN, " ");
+  print(22, 5, YELLOW, " ");
+  print(24, 5, CYAN, " ");
+  print(26, 5, WHITE, " ");
 
   ttr -= deltaTime();
+
   if (ttr <= 0)
   {
     bitmap_from_file("img/tester.kbm", myBMP);
-    ttr = 5;
+    ttr = 1;
   }
 }
 
