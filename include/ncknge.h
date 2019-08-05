@@ -5,6 +5,17 @@
 /* Set to 34/16 to perform aspect corrections */
 #define BLOCK_ASPECT (34./16.)
 
+#define ncknge_error(...) {\
+  endwin(); \
+  printf (__VA_ARGS__); \
+  exit(1); \
+}
+
+#define print(x, y, color, ...) {\
+  color_set(color+1, NULL); \
+  mvprintw(y, x, __VA_ARGS__); \
+}
+
 /*
  * @todo ensure all colors are of type color
  * @body some may still be ints.
@@ -134,7 +145,7 @@ typedef struct {
 } bitmap;
 
 color bitmap_peek(component* c, vec2* v);
-component* bitmap_from_file(char* filename);
+component* bitmap_from_file(char* filename, component* dest);
 component* bitmap_create(int img_width, int img_height, char* img_str);
 void bitmap_free(bitmap* b);
 
@@ -174,9 +185,12 @@ world_model* NCKNGE_GLOBAL_WORLD_MODEL;
  */
 void set_color_mode(color_mode mode);
 
-void print(int x, int y, char* string, color color);
-
 /* Screen space blit a pixel. */
 void pix(int x, int y, color color);
 
-void execute(void setup(), void update(), void key(char k));
+float elapsedTime();
+
+float deltaTime();
+
+void execute(void setup(), void update(),
+    void key(char k));

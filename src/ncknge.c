@@ -4,6 +4,8 @@
 #include <locale.h>
 #include <ncurses.h>
 
+#include <time.h>
+
 #include <math.h>
 #ifndef M_PI
   #define M_PI 3.1415926535897
@@ -238,7 +240,7 @@ color bitmap_peek(component* c, vec2* v)
   v->y /= BLOCK_ASPECT;
   bitmap* b = c->fields;
   float im_vcoord_x = (v->x - b->x) / b->w;
-  float im_vcoord_y = (v->y - b->y) / b->h;
+  float im_vcoord_y = 1-(v->y - b->y) / b->h;
   if (im_vcoord_x >= 0 && im_vcoord_x < 1 && im_vcoord_y >= 0 &&
       im_vcoord_y < 1)
   {
@@ -275,9 +277,14 @@ color char_to_color(char c)
   return CLEAR;
 }
 
-component* bitmap_from_file(char* filename)
+component* bitmap_from_file(char* filename, component* dest)
 {
   FILE* bmp_file = fopen(filename, "r");
+
+  if (bmp_file == NULL)
+  {
+    ncknge_error("File not found: %s\n", filename);
+  }
 
   int c = 0;
   int row_len = 0;
@@ -286,7 +293,8 @@ component* bitmap_from_file(char* filename)
 
   while (c != EOF)
   {
-    while (c != '\n' && c != EOF)
+    row_len = 0;
+    while (c != 0xa && c != EOF)
     {
       row_len += 1;
       c = fgetc(bmp_file);
@@ -301,18 +309,39 @@ component* bitmap_from_file(char* filename)
     row_count += 1;
   }
 
-  color* pixels = malloc(row_count * col_count * sizeof(color));
+  int pix_count = row_count * col_count;
+  color* pixels;
+  if (dest == NULL)
+  {
+    pixels = malloc(pix_count * sizeof(color));
+  }
+  else
+  {
+    pixels = realloc(((bitmap*)dest->fields)->pixels,
+        pix_count * sizeof(color));
+  }
 
   rewind(bmp_file);
   c = fgetc(bmp_file);
   int i=0;
 
+  int curr_row_size;
   while (c != EOF)
   {
-    while (c != '\n' && c != EOF)
+    curr_row_size = 0;
+    while (curr_row_size < col_count)
     {
-      pixels[i] = char_to_color(c);
-      c = fgetc(bmp_file);
+      if (c != 0xa && c != EOF)
+      {
+        pixels[i] = char_to_color(c);
+        c = fgetc(bmp_file);
+      }
+      else
+      {
+        pixels[i] = 0x20;
+      }
+
+      curr_row_size += 1;
       i++;
     }
     c = fgetc(bmp_file);
@@ -320,8 +349,26 @@ component* bitmap_from_file(char* filename)
 
   fclose(bmp_file);
 
-  component* cmp = malloc(sizeof(component));
-  bitmap* b = malloc(sizeof(bitmap));
+
+  component* cmp;
+  bitmap* b;
+
+  if (dest == NULL)
+  {
+    cmp = malloc(sizeof(component));
+
+    b = malloc(sizeof(bitmap));
+    b->pixels = pixels;
+
+    cmp->fields = b;
+    cmp->peek = bitmap_peek;
+    cmp->transform = transform_new();
+  }
+  else
+  {
+    cmp = dest;
+    b = dest->fields;
+  }
 
   b->x = 0;
   b->y = 0;
@@ -330,12 +377,6 @@ component* bitmap_from_file(char* filename)
 
   b->img_width = col_count;
   b->img_height = row_count;
-
-  b->pixels = pixels;
-
-  cmp->fields = b;
-  cmp->peek = bitmap_peek;
-  cmp->transform = transform_new();
 
   return cmp;
 }
@@ -473,20 +514,30 @@ void draw()
     }
 }
 
-void print(int x, int y, char* string, color color)
-{
-  /* color is ignored unless NGLB_COL_MOD is TEXT */
-  color_set(color, NULL);
-
-  mvaddstr(y, x, string);
-}
-
 void pix(int x, int y, color color)
 {
   /* The color pairs correspond to the color constants */
   color_set(color+1, NULL);
 
   mvaddch(NCKNGE_GLOBAL_SCREEN_INFO->rows-y-1, x, ' ');
+}
+
+struct timespec time_start;
+struct timespec time_prev;
+struct timespec time_now;
+
+float elapsedTime()
+{
+  clock_gettime(CLOCK_MONOTONIC_RAW, &time_now);
+  return time_now.tv_sec - time_start.tv_sec +
+    (time_now.tv_nsec - time_start.tv_nsec)/1.e9;
+}
+
+float deltaTime()
+{
+  clock_gettime(CLOCK_MONOTONIC_RAW, &time_now);
+  return time_now.tv_sec - time_prev.tv_sec +
+    (time_now.tv_nsec - time_prev.tv_nsec)/1.e9;
 }
 
 void execute(void setup(), void update(), void key(char k))
@@ -538,11 +589,15 @@ void execute(void setup(), void update(), void key(char k))
 
   setup();
 
+  clock_gettime(CLOCK_MONOTONIC_RAW, &time_start);
+  clock_gettime(CLOCK_MONOTONIC_RAW, &time_prev);
+
   char k;
   while (true)
   {
     draw();
     update();
+    clock_gettime(CLOCK_MONOTONIC_RAW, &time_prev);
 
     k = getch();
 

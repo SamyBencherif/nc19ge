@@ -39,31 +39,24 @@ void setup()
 
 void update()
 {
-  print(0, 0, "Use WASD to nudge translation.", 0);
-  print(0, 1, "Use QE to adjust rotation.", 0);
-  print(0, 2, "Use RF to set scale.", 0);
+  print(0, 0, BLACK, "Use WASD to nudge translation.");
+  print(0, 1, BLACK, "Use QE to adjust rotation.");
+  print(0, 2, BLACK, "Use RF to set scale.");
 
-  char t[100];
-  sprintf(t, "matrx [%f %f]",
+  print(0, 3, YELLOW, "matrx [%f %f]",
       NCKNGE_GLOBAL_TRANSFORM->rot_scale->m00,
       NCKNGE_GLOBAL_TRANSFORM->rot_scale->m01
   );
-  t[99] = '\0';
-  print(0, 3, t, 0);
 
-  sprintf(t, "      [%f %f]",
+  print(0, 4, YELLOW, "      [%f %f]",
       NCKNGE_GLOBAL_TRANSFORM->rot_scale->m10,
       NCKNGE_GLOBAL_TRANSFORM->rot_scale->m11
   );
-  t[99] = '\0';
-  print(0, 4, t, 0);
 
-  sprintf(t, "trnsl [%f %f]",
+  print(0, 5, MAGENTA, "trnsl [%f %f]",
       NCKNGE_GLOBAL_TRANSFORM->translate->x,
       NCKNGE_GLOBAL_TRANSFORM->translate->y
   );
-  t[99] = '\0';
-  print(0, 6, t, 0);
 }
 
 void key(char k)
