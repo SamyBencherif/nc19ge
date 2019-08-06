@@ -21,6 +21,7 @@
  * @body some may still be ints.
  */
 typedef enum {
+  CLEAR,
   BLACK = COLOR_BLACK,
   RED = COLOR_RED,
   GREEN = COLOR_GREEN,
@@ -29,7 +30,6 @@ typedef enum {
   MAGENTA = COLOR_MAGENTA,
   CYAN = COLOR_CYAN,
   WHITE = COLOR_WHITE,
-  CLEAR
 } color;
 
 /* @begin data structures */

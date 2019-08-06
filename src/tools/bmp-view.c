@@ -13,7 +13,7 @@ float ttr;
 
 void setup()
 {
-  myBMP = bitmap_from_file("img/tester.kbm", NULL);
+  myBMP = bitmap_from_file("img/wizard-and-bears.kbm", NULL);
   component_add(myBMP);
   transform_set_scale(camera, 1);
 
@@ -28,11 +28,11 @@ void update()
 
   print(0, 4, BLACK, "COLORS 0      1 2 3 4 5 6 7 \' \'");
   print(0, 5, BLACK, "      (BLACK)               (CLEAR)");
-  print(14, 5, BLUE, " ");
-  print(16, 5, RED, " ");
-  print(18, 5, MAGENTA, " ");
-  print(20, 5, GREEN, " ");
-  print(22, 5, YELLOW, " ");
+  print(14, 5, RED, " ");
+  print(16, 5, GREEN, " ");
+  print(18, 5, YELLOW, " ");
+  print(20, 5, BLUE, " ");
+  print(22, 5, MAGENTA, " ");
   print(24, 5, CYAN, " ");
   print(26, 5, WHITE, " ");
 
@@ -40,7 +40,7 @@ void update()
 
   if (ttr <= 0)
   {
-    bitmap_from_file("img/tester.kbm", myBMP);
+    bitmap_from_file("img/wizard-and-bears.kbm", myBMP);
     ttr = 1;
   }
 }

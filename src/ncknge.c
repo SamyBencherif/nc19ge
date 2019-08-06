@@ -260,15 +260,15 @@ color char_to_color(char c)
     case '0':
       return BLACK;
     case '1':
-      return BLUE;
-    case '2':
       return RED;
-    case '3':
-      return MAGENTA;
-    case '4':
+    case '2':
       return GREEN;
-    case '5':
+    case '3':
       return YELLOW;
+    case '4':
+      return BLUE;
+    case '5':
+      return MAGENTA;
     case '6':
       return CYAN;
     case '7':
