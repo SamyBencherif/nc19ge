@@ -8,12 +8,15 @@
   #define M_PI 3.1415926535897
 #endif
 
+#include <libgen.h>
+
 component* myBMP;
 float ttr;
+char* filepath;
 
 void setup()
 {
-  myBMP = bitmap_from_file("img/wizard-and-bears.kbm", NULL);
+  myBMP = bitmap_from_file(filepath, NULL);
   component_add(myBMP);
   transform_set_scale(camera, 1);
 
@@ -40,7 +43,7 @@ void update()
 
   if (ttr <= 0)
   {
-    bitmap_from_file("img/wizard-and-bears.kbm", myBMP);
+    bitmap_from_file(filepath, myBMP);
     ttr = 1;
   }
 }
@@ -74,6 +77,14 @@ void key(char k)
 }
 
 int main(int argc, char** argv) {
+
+  if (argc < 2)
+  {
+    ncknge_error("Usage: %s file.kbm\n", basename(argv[0]));
+  }
+
+  filepath = argv[1];
+
   execute(setup, update, key);
   return EXIT_SUCCESS;
 }

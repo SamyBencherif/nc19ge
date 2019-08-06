@@ -1,5 +1,8 @@
-autocmd TextChanged,TextChangedI <buffer> silent write
+" continuous auto-save, for quick preview in ncknge
+"autocmd TextChanged,TextChangedI <buffer> silent write
+
 set nonumber
+set colorcolumn=0
 
 highlight RED cterm=bold term=bold ctermbg=red ctermfg=red
 syntax match RED /1/
@@ -26,4 +29,3 @@ syntax match WHITE /7/
 map [ :prev<CR>:source scripts/bmp-edit.vim<CR>
 map ] :next<CR>:source scripts/bmp-edit.vim<CR>
 
-set colorcolumn=0

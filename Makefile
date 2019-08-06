@@ -18,6 +18,7 @@ examples examples/:
 
 tools tools/:
 	$(CC) $(CFLAGS) -o bin/tools/bmp-view -Lbin -I include src/tools/bmp-view.c -lncurses -lncknge -lm
+	$(CC) $(CFLAGS) -o bin/tools/getKeyCode -Lbin -I include src/tools/getKeyCode.c -lncurses -lncknge -lm
 
 clean:
 	rm -r bin/*

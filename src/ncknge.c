@@ -338,7 +338,7 @@ component* bitmap_from_file(char* filename, component* dest)
       }
       else
       {
-        pixels[i] = 0x20;
+        pixels[i] = CLEAR;
       }
 
       curr_row_size += 1;
@@ -493,7 +493,6 @@ void draw()
         h.y = y - NCKNGE_GLOBAL_SCREEN_INFO->rows/2 + .5;
 
         /* Perform aspect corrections */
-        /* DEPRECATED (Currently set to multiply by 1)  */
         h.y *= BLOCK_ASPECT;
 
         /*
@@ -601,16 +600,17 @@ void execute(void setup(), void update(), void key(char k))
 
     k = getch();
 
-    if (k != ERR)
+    if (k == ERR)
+    {
+    }
+    else if (k == -102) /* resize event */
+    {
+      NCKNGE_GLOBAL_SCREEN_INFO = screen_info_get();
+    }
+    else
     {
       key(k);
     }
-
-    /*
-     * @todo on resize, update_screen_info
-     * @body to ensure things that are supposed to be centered stay
-     * centered
-     */
   }
 
   /* @begin deinitialization */

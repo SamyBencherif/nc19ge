@@ -1,5 +1,7 @@
 
 #include <stdbool.h>
+#include <stdlib.h>
+
 #include <ncurses.h>
 
 /* Set to 34/16 to perform aspect corrections */
