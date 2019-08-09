@@ -3,6 +3,11 @@
 
 set nonumber
 set colorcolumn=0
+set nowrap
+set list
+set ruler
+set virtualedit=insert
+
 
 highlight RED cterm=bold term=bold ctermbg=red ctermfg=red
 syntax match RED /1/

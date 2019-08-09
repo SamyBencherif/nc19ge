@@ -16,6 +16,8 @@ library src/ include/:
 examples examples/:
 	$(CC) $(CFLAGS) -o bin/examples/frogs -Lbin -I include src/examples/frogs.c -lncurses -lncknge -lm
 	$(CC) $(CFLAGS) -o bin/examples/frogs-standalone -Lbin -I include src/examples/frogs-standalone.c -lncurses -lncknge -lm
+	$(CC) $(CFLAGS) -o bin/examples/cave -Lbin -I include src/examples/cave.c -lncurses -lncknge -lm
+	-cp -r tex bin/examples/
 
 tools tools/:
 	$(CC) $(CFLAGS) -o bin/tools/bmp-view -Lbin -I include src/tools/bmp-view.c -lncurses -lncknge -lm
