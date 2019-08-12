@@ -8,10 +8,9 @@ ARFLAGS=-rs
 all: library tools examples
 
 library src/ include/:
-	$(CC) $(CFLAGS) -o bin/ncknge.o -Iinclude -c src/ncknge.c
-	$(AR) $(ARFLAGS) bin/libncknge.a bin/ncknge.o
-	-mkdir bin/examples
-	-mkdir bin/tools
+	$(CC) $(CFLAGS) -o lib/ncknge.o -Iinclude -c src/ncknge.c
+	$(AR) $(ARFLAGS) lib/libncknge.a lib/ncknge.o
+	-rm lib/ncknge.o
 
 examples examples/:
 	$(CC) $(CFLAGS) -o bin/examples/frogs -Lbin -I include src/examples/frogs.c -lncurses -lncknge -lm

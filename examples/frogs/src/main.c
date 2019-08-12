@@ -6,10 +6,13 @@
 #include <unistd.h>
 
 #include "ncknge.h"
+
 #include <math.h>
 #ifndef M_PI
   #define M_PI 3.1415926535897
 #endif
+
+#include "resource/KBM_FROG.c"
 
 float random_float()
 {
@@ -43,13 +46,7 @@ void setup()
   component_add(quad_new(-50,-10,100,10,MAGENTA));
   component_add(quad_new(-50,-20,100,10,WHITE));
 
-  char* frog_str =
-	"  222222          "
-	" 222232222222     "
-	"22222222222222222 "
-	"     2222222222222"
-	"  2222222222222222"
-	"   2      222     ";
+  char* frog_str = KBM_FROG;
 
   frog1 = component_add(bitmap_create(18, 6, frog_str));
   frog1->transform->translate->x = 14;
@@ -70,9 +67,9 @@ void setup()
   tongue2->transform->translate->x = -24;
   tongue2->transform->translate->y = 0;
 
-  fly = component_add(bitmap_create(2, 3, "7 \n44\n 7"));
+  fly = component_add(bitmap_create(2, 3, "7 44 7"));
   flyFrames[1] = *(bitmap*)fly->fields;
-  flyFrames[0] = *(bitmap*)bitmap_create(2, 3, " 7\n44\n7 ")->fields;
+  flyFrames[0] = *(bitmap*)bitmap_create(2, 3, " 7447 ")->fields;
 
   camera->translate->y = 10;
 }
