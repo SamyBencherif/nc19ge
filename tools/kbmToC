@@ -18,6 +18,8 @@ for FN in os.listdir(sys.argv[2]):
     if not (FN.endswith(".kbm") or FN.endswith(".KBM")):
         continue
 
+    print(FN)
+
     F = open(sys.argv[2] + os.sep + FN)
     FC = F.read()
 
@@ -31,11 +33,19 @@ for FN in os.listdir(sys.argv[2]):
     OFC = FC
     W = len(max(OFC.split("\n"), key=len))
     OFC = "\n".join([f'"{ln + (" "*(W-len(ln)))}"\\' for ln in OFC.split("\n")[:-1]])
-    OFC = "#define " + os.path.basename(OFN[:-2]) + " \\\n" + OFC
+
+    identifier = os.path.basename(OFN[:-2])
+
+    OFC = "#define " + identifier + " \\\n" + OFC
+
+    # Trim extra '\'
     OFC = OFC[:-1]
+
+    OFC += "\n#define " + identifier + "_W " + str(W)
+    OFC += "\n#define " + identifier + "_H " + str(FC.count("\n"))
 
     OF = open(OFN, "w")
     OF.write(OFC)
     OF.close()
     del OF
-    exit(0)
+exit(0)

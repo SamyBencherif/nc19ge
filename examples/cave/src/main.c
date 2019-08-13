@@ -6,6 +6,9 @@
 
 #include "ncknge.h"
 
+#include "resource/KBM_CAVE.c"
+#include "resource/KBM_WARRIOR.c"
+
 component* cave;
 component* warrior;
 
@@ -13,16 +16,16 @@ component* coll_ind;
 
 void setup()
 {
-  cave = bitmap_from_file("tex/cave.kbm", NULL);
+  cave = bitmap_create(KBM_CAVE_W, KBM_CAVE_H, KBM_CAVE);
   transform_set_scale(cave->transform, 3);
   cave->transform->translate->y = -((bitmap*)cave->fields)->img_height
                                             * BLOCK_ASPECT * 3;
   component_add(cave);
 
-  warrior = bitmap_from_file("tex/warrior.kbm", NULL);
+  warrior = bitmap_create(KBM_WARRIOR_W, KBM_WARRIOR_H, KBM_WARRIOR);
   component_add(warrior);
 
-  coll_ind = quad_new(6, 2, 1, BLOCK_ASPECT, YELLOW);
+  coll_ind = quad_new(6, 1, 1, BLOCK_ASPECT, YELLOW);
   component_add(coll_ind);
 }
 
