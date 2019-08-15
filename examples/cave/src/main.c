@@ -25,36 +25,43 @@ void setup()
   warrior = bitmap_create(KBM_WARRIOR_W, KBM_WARRIOR_H, KBM_WARRIOR);
   component_add(warrior);
 
-  coll_ind = quad_new(6, 1, 1, BLOCK_ASPECT, YELLOW);
+  coll_ind = quad_new(0, 0, 1, BLOCK_ASPECT, GREEN);
+  coll_ind->transform->translate->x = 6;
+  coll_ind->transform->translate->y = 1;
   component_add(coll_ind);
 }
 
 void warrior_physics()
 {
-  /**
-   *
-   * Extract function from ncknge draw, screen_point_color_from_obj,
-   * rename if possible. This function will be used to tell if the
-   * player's foot is touching yellow (from the cave).
-   *
-   */
-  if (0)
+  print(0,0, peek_component(W/2 + 6, H/2 + 1, cave), "COLOR");
+  if (
+      peek_component(W/2 + 6, H/2 + 1, cave) == YELLOW
+      )
   {
     ((quad*)coll_ind->fields)->color = RED;
   }
   else
   {
-    ((quad*)coll_ind->fields)->color = YELLOW;
+    ((quad*)coll_ind->fields)->color = GREEN;
   }
 }
 
 void update()
 {
   warrior_physics();
+  print(3, H-4, MAGENTA, "       ");
+  print(3, H-3, MAGENTA, "  HEY  ");
+  print(3, H-2, MAGENTA, "       ");
 }
 
 void key(char k)
 {
+  if (k == 'w')
+  {
+    warrior->transform->translate->y += 1;
+    coll_ind->transform->translate->y += 1;
+    camera->translate->y += 1;
+  }
   if (k == 's')
   {
     warrior->transform->translate->y -= 1;

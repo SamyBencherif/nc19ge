@@ -450,6 +450,33 @@ component* component_add(component* c)
 
 /* @end data structures */
 
+color peek_component(float x, float y, component* c)
+{
+  vec2 h;
+
+	/* Center world coords in screen */
+	h.x = x - NCKNGE_GLOBAL_SCREEN_INFO->cols/2 + .5;
+	h.y = y - NCKNGE_GLOBAL_SCREEN_INFO->rows/2 + .5;
+
+	/* Perform aspect corrections */
+	h.y *= BLOCK_ASPECT;
+
+	/*
+	 * The order of the next two lines matters! They are not quite
+	 * linear transformations (translate is included).
+	 */
+
+	/* Apply viewport transform */
+	transform_apply(NCKNGE_GLOBAL_TRANSFORM, &h);
+
+	/* Apply local transform */
+	transform_apply_inv(c->transform, &h);
+
+	color p = c->peek(c, &h);
+
+	return p;
+}
+
 void draw()
 {
   /*
@@ -460,7 +487,6 @@ void draw()
    *
    */
 
-  vec2 h;
   int x, y;
   for (x=0; x<NCKNGE_GLOBAL_SCREEN_INFO->cols; x++)
     for (y=0; y<NCKNGE_GLOBAL_SCREEN_INFO->rows; y++)
@@ -488,25 +514,7 @@ void draw()
          * different from the present value.
          */
 
-        /* Center world coords in screen */
-        h.x = x - NCKNGE_GLOBAL_SCREEN_INFO->cols/2 + .5;
-        h.y = y - NCKNGE_GLOBAL_SCREEN_INFO->rows/2 + .5;
-
-        /* Perform aspect corrections */
-        h.y *= BLOCK_ASPECT;
-
-        /*
-         * The order of the next two lines matters! They are not quite
-         * linear transformations (translate is included).
-         */
-
-        /* Apply viewport transform */
-        transform_apply(NCKNGE_GLOBAL_TRANSFORM, &h);
-
-        /* Apply local transform */
-        transform_apply_inv(c->transform, &h);
-
-        color p = c->peek(c, &h);
+        color p = peek_component(x, y, c);
         if (p != CLEAR)
           pix(x, y, p);
       }

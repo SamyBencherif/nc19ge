@@ -7,6 +7,9 @@
 /* Set to 34/16 to perform aspect corrections */
 #define BLOCK_ASPECT (34./16.)
 
+#define W (NCKNGE_GLOBAL_SCREEN_INFO->cols)
+#define H (NCKNGE_GLOBAL_SCREEN_INFO->rows)
+
 #define ncknge_error(...) {\
   endwin(); \
   printf (__VA_ARGS__); \
@@ -169,6 +172,10 @@ typedef enum {
   TEXT
 } color_mode;
 
+/*
+ * @todo include local ncursesw source
+ */
+
 /* @end data structures */
 
 /*
@@ -193,6 +200,9 @@ void pix(int x, int y, color color);
 float elapsedTime();
 
 float deltaTime();
+
+color peek_component(float x, float y, component* c);
+color peek_world(float x, float y);
 
 void execute(void setup(), void update(),
     void key(char k));
