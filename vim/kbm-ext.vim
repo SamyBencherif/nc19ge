@@ -30,7 +30,10 @@ syntax match CYAN /6/
 highlight WHITE cterm=bold term=bold ctermbg=white ctermfg=white
 syntax match WHITE /7/
 
+highlight BLACK cterm=bold term=bold ctermbg=black ctermfg=black
+syntax match BLACK /0/
+
 " Preservation of self..
-map [ :prev<CR>:source scripts/bmp-edit.vim<CR>
-map ] :next<CR>:source scripts/bmp-edit.vim<CR>
+map [ :prev<CR>:source ~/workspace/ncknge/vim/bmp-edit.vim<CR>
+map ] :next<CR>:source ~/workspace/ncknge/vim/bmp-edit.vim<CR>
 

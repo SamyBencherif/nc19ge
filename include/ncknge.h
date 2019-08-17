@@ -105,6 +105,7 @@ typedef struct vc {
 
   struct vc* prerender;
   struct vc* postrender;
+  bool visible;
 } component;
 
 /* specific view components */
@@ -161,11 +162,14 @@ typedef struct{
   component* tail;
 } world_model;
 
+/*
 world_model* world_model_new();
 component* world_model_insert(world_model* vm, component* c);
 void world_model_free(world_model* vm);
+*/
 
 component* component_add(component* c);
+void component_remove(component* c);
 
 typedef enum {
   BLOCK,

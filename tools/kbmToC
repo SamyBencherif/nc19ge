@@ -43,6 +43,7 @@ for FN in os.listdir(sys.argv[2]):
 
     OFC += "\n#define " + identifier + "_W " + str(W)
     OFC += "\n#define " + identifier + "_H " + str(FC.count("\n"))
+    OFC += "\n"
 
     OF = open(OFN, "w")
     OF.write(OFC)

@@ -195,6 +195,7 @@ component* quad_new(float x, float y, float w, float h, color color)
   c->fields = q;
   c->peek = quad_peek;
   c->transform = transform_new();
+  c->visible = true;
 
   return c;
 }
@@ -229,6 +230,7 @@ component* ellipse_new(float x, float y, float w, float h, color color)
   c->fields = e;
   c->peek = ellipse_peek;
   c->transform = transform_new();
+  c->visible = true;
 
   return c;
 }
@@ -406,6 +408,7 @@ component* bitmap_create(int img_width, int img_height, char* img_str)
   c->fields = b;
   c->peek = bitmap_peek;
   c->transform = transform_new();
+  c->visible = true;
 
   return c;
 }
@@ -436,6 +439,19 @@ component* world_model_insert(world_model* vm, component* c)
   }
   else
   {
+
+    /*
+     * Caution triggers non-terminating draw loop if
+     * add two refs of same object.
+     *
+     * Do #IFDEF acyclicGuard
+     *
+     * feature makes game slower, addcomponent O(n)
+     * instead of O(1), but less likely to crash due to programmer
+     * error
+     *
+     */
+
     c->prerender = vm->head;
     vm->head->postrender = c;
     vm->head = c;
@@ -443,9 +459,28 @@ component* world_model_insert(world_model* vm, component* c)
   return c;
 }
 
+void world_model_remove(world_model* vm, component* c)
+{
+
+  if (c->prerender == NULL)
+  {
+      vm->head = NULL;
+      vm->tail = NULL;
+  }
+  else
+  {
+      c->prerender->postrender = c->postrender;
+  }
+}
+
 component* component_add(component* c)
 {
   return world_model_insert(NCKNGE_GLOBAL_WORLD_MODEL, c);
+}
+
+void component_remove(component* c)
+{
+  return world_model_remove(NCKNGE_GLOBAL_WORLD_MODEL, c);
 }
 
 /* @end data structures */
@@ -507,6 +542,12 @@ void draw()
             c = c->postrender
           )
       {
+
+        if (!c->visible)
+        {
+            continue;
+        }
+
         /*
          * @todo optimize redraw
          * @body currently will set all pixels to the designated future

@@ -10,9 +10,13 @@
 #include "resource/KBM_WARRIOR.c"
 
 component* cave;
+
 component* warrior;
 
-component* coll_ind;
+float warrior_vx = 0;
+float warrior_vy = 0;
+
+bool warrior_grounded = false;
 
 void setup()
 {
@@ -23,26 +27,43 @@ void setup()
   component_add(cave);
 
   warrior = bitmap_create(KBM_WARRIOR_W, KBM_WARRIOR_H, KBM_WARRIOR);
-  component_add(warrior);
 
-  coll_ind = quad_new(0, 0, 1, BLOCK_ASPECT, GREEN);
-  coll_ind->transform->translate->x = 6;
-  coll_ind->transform->translate->y = 1;
-  component_add(coll_ind);
+  warrior->transform->translate->y -= 5*BLOCK_ASPECT;
+
+  warrior->transform->translate->x += 10;
+  camera->translate->x += 10;
+
+  warrior->transform->translate->y -= 30;
+  camera->translate->y -= 30;
+
+  component_add(warrior);
 }
 
 void warrior_physics()
 {
-  print(0,0, peek_component(W/2 + 6, H/2 + 1, cave), "COLOR");
-  if (
-      peek_component(W/2 + 6, H/2 + 1, cave) == YELLOW
+
+  warrior->transform->translate->x += warrior_vx;
+  camera->translate->x += warrior_vx;
+
+  warrior_vx *= .9;
+
+  if (warrior_vy >= -10)
+  {
+    warrior_vy -= .4;
+  }
+
+  warrior->transform->translate->y += warrior_vy;
+  camera->translate->y += warrior_vy;
+
+  warrior_grounded = false;
+  while (
+      peek_component(W/2 + 6.5, H/2 - 5, cave) == YELLOW
       )
   {
-    ((quad*)coll_ind->fields)->color = RED;
-  }
-  else
-  {
-    ((quad*)coll_ind->fields)->color = GREEN;
+    warrior_grounded = true;
+    warrior_vy = 0;
+    warrior->transform->translate->y += 1;
+    camera->translate->y += 1;
   }
 }
 
@@ -56,17 +77,20 @@ void update()
 
 void key(char k)
 {
-  if (k == 'w')
+  if (k == 'w' || k == 3 || k == ' ')
   {
-    warrior->transform->translate->y += 1;
-    coll_ind->transform->translate->y += 1;
-    camera->translate->y += 1;
+    if (warrior_grounded)
+    {
+      warrior_vy += 7;
+    }
   }
-  if (k == 's')
+  if (k == 'd' || k == 5)
   {
-    warrior->transform->translate->y -= 1;
-    coll_ind->transform->translate->y -= 1;
-    camera->translate->y -= 1;
+    warrior_vx = 3;
+  }
+  if (k == 'a' || k == 4)
+  {
+    warrior_vx = -3;
   }
 }
 
