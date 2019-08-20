@@ -7,7 +7,7 @@ NKNGE=../..
 # base name of binary
 PROG=valley-of-crystals
 # name of platform
-PLAT=linux
+PLAT=osx
 # build date (auto)
 DATE=`date +'%y.%m.%d-%H.%M.%S'`
 # full name of binary
@@ -22,7 +22,7 @@ build: clean resources
 	$(CC) $(CFLAGS) -o bin/$(PROGNAME) src/main.c -L$(NKNGE)/lib -I$(NKNGE)/include -lncurses -lncknge -lm
 
 clean:
-	-rm bin/*
+	-rm bin/$(PLAT)/*
 
 resources:
 	$(NKNGE)/tools/kbmToC -d src/tex -o src/resource
