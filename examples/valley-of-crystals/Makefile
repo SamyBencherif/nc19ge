@@ -7,18 +7,19 @@ NKNGE=../..
 # base name of binary
 PROG=valley-of-crystals
 # name of platform
-PLAT=darwin
+PLAT=linux
 # build date (auto)
 DATE=`date +'%y.%m.%d-%H.%M.%S'`
 # full name of binary
-PROGNAME=$(PROG)-$(PLAT)-$(DATE)
+PROGNAME=$(PLAT)/$(PROG)
 
 CC=gcc
 CFLAGS=-Wall -std=c89 -Werror#
 
 build: clean resources
 	-mkdir bin
-	$(CC) $(CFLAGS) -o bin/$(PROGNAME) -L$(NKNGE)/lib -I$(NKNGE)/include src/main.c -lncurses -lncknge -lm
+	-mkdir bin/$(PLAT)
+	$(CC) $(CFLAGS) -o bin/$(PROGNAME) src/main.c -L$(NKNGE)/lib -I$(NKNGE)/include -lncurses -lncknge -lm
 
 clean:
 	-rm bin/*
