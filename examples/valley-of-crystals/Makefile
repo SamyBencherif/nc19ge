@@ -1,19 +1,29 @@
 
 # use local version
+ifndef NKNGE
 NKNGE=../..
+endif
 # use system install
 #NKNGE=/usr/local
 
 # base name of binary
 PROG=valley-of-crystals
+
 # name of platform
-PLAT=osx
+ifndef PLAT
+PLAT="$(shell uname | tr A-Z a-z)"
+endif
+
 # build date (auto)
 DATE=`date +'%y.%m.%d-%H.%M.%S'`
+
 # full name of binary
 PROGNAME=$(PLAT)/$(PROG)
 
+ifndef CC
 CC=gcc
+endif
+
 CFLAGS=-Wall -std=c89 -Werror#
 
 build: clean resources
@@ -29,3 +39,4 @@ resources:
 
 name:
 	@echo $(PROGNAME)
+
