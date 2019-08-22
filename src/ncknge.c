@@ -4,8 +4,6 @@
 #include <locale.h>
 #include <ncurses.h>
 
-#include <time.h>
-
 #include <math.h>
 #ifndef M_PI
   #define M_PI 3.1415926535897
@@ -570,24 +568,6 @@ void pix(int x, int y, color color)
   mvaddch(NCKNGE_GLOBAL_SCREEN_INFO->rows-y-1, x, ' ');
 }
 
-struct timespec time_start;
-struct timespec time_prev;
-struct timespec time_now;
-
-float elapsedTime()
-{
-  clock_gettime(CLOCK_MONOTONIC_RAW, &time_now);
-  return time_now.tv_sec - time_start.tv_sec +
-    (time_now.tv_nsec - time_start.tv_nsec)/1.e9;
-}
-
-float deltaTime()
-{
-  clock_gettime(CLOCK_MONOTONIC_RAW, &time_now);
-  return time_now.tv_sec - time_prev.tv_sec +
-    (time_now.tv_nsec - time_prev.tv_nsec)/1.e9;
-}
-
 void execute(void setup(), void update(), void key(char k))
 {
   setlocale(LC_ALL, "");
@@ -637,15 +617,11 @@ void execute(void setup(), void update(), void key(char k))
 
   setup();
 
-  clock_gettime(CLOCK_MONOTONIC_RAW, &time_start);
-  clock_gettime(CLOCK_MONOTONIC_RAW, &time_prev);
-
   char k;
   while (true)
   {
     draw();
     update();
-    clock_gettime(CLOCK_MONOTONIC_RAW, &time_prev);
 
     k = getch();
 
