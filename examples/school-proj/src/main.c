@@ -1,9 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <libgen.h>
-#include <unistd.h>
-
 #include "ncknge.h"
 
 #include <math.h>
@@ -18,14 +15,6 @@
 #include "resource/KBM_SLIDE2.c"
 #include "resource/KBM_SLIDE3.c"
 
-component* slides[number_of_slides];
-
-int slidecurrent;
-int time;
-
-float angle;
-float scale;
-
 #define load_slide(n) {\
   slides[n-1] = bitmap_create(KBM_SLIDE##n##_W, KBM_SLIDE##n##_H, KBM_SLIDE##n); \
   slides[n-1]->transform->translate->x = -KBM_SLIDE##n##_W/2; \
@@ -34,6 +23,14 @@ float scale;
   component_add(slides[n-1]); \
 }
 
+component* slides[number_of_slides];
+
+int slidecurrent;
+int time;
+
+float angle;
+float scale;
+
 void setup()
 {
   slidecurrent = 0;
@@ -41,7 +38,7 @@ void setup()
 
   angle = 0;
   scale = 1;
- 
+
   /* this is a macro, cannot be put in loop
      should load all slides from `number_of_slides` */
   load_slide(1);
@@ -103,7 +100,6 @@ void update()
 
 
 int main(int argc, char** argv) {
-  chdir(dirname(argv[0]));
   execute(setup, update, key);
   return EXIT_SUCCESS;
 }
