@@ -29,7 +29,7 @@ CFLAGS=-Wall -std=c89 -Werror#
 build: clean resources
 	-mkdir bin
 	-mkdir bin/$(PLAT)
-	$(CC) $(CFLAGS) -o bin/$(PROGNAME) src/main.c -L$(NKNGE)/lib -I$(NKNGE)/include -lncurses -lncknge -lm
+	$(CC) $(CFLAGS) -o bin/$(PROGNAME) src/main.c -L$(NKNGE)/lib -I$(NKNGE)/include -lncknge -lncurses -lm
 
 clean:
 	-rm bin/$(PLAT)/*

@@ -1,4 +1,3 @@
-#include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -39,7 +38,7 @@ void update()
   print(24, 5, CYAN, " ");
   print(26, 5, WHITE, " ");
 
-  ttr -= deltaTime();
+  ttr -= 1;
 
   if (ttr <= 0)
   {

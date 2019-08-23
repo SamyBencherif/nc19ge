@@ -16,6 +16,17 @@
   exit(1); \
 }
 
+#define ncknge_quit(...) {\
+  endwin(); \
+  printf (__VA_ARGS__); \
+  exit(0); \
+}
+
+#define ncknge_quit_no_msg(...) {\
+  endwin(); \
+  exit(0); \
+}
+
 #define print(x, y, color, ...) {\
   color_set(color+1, NULL); \
   mvprintw(y, x, __VA_ARGS__); \

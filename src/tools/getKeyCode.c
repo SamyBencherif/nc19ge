@@ -16,4 +16,5 @@ void key(char k)
 int main(void)
 {
   execute(setup, update, key);
+  return 0;
 }
