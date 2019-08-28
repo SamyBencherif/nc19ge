@@ -18,7 +18,7 @@ CFLAGS=-Wall -std=c89 -Werror#
 
 build: clean preprocess-resources
 	-mkdir bin
-	$(CC) $(CFLAGS) -o bin/$(PROGNAME) -L$(NKNGE)/lib -I$(NKNGE)/include src/main.c -lncurses -lncknge -lm
+	$(CC) $(CFLAGS) -o bin/$(PROGNAME) -L$(NKNGE)/lib/$(PLAT) -I$(NKNGE)/include src/main.c -lncurses -lncknge -lm
 
 clean:
 	-rm -r bin/*

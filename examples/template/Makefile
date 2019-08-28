@@ -1,13 +1,13 @@
 
 # use local version
-ifndef NKNGE
-NKNGE=../..
+ifndef NCKNGE
+NCKNGE=../..
 endif
 # use system install
-#NKNGE=/usr/local
+#NCKNGE=/usr/local
 
 # base name of binary
-PROG=school-proj
+PROG=program
 
 # name of platform
 ifndef PLAT
@@ -27,15 +27,16 @@ endif
 CFLAGS=-Wall -std=c89 -Werror#
 
 build: clean resources
-	-mkdir bin
-	-mkdir bin/$(PLAT)
-	$(CC) $(CFLAGS) -o bin/$(PROGNAME) src/main.c -L$(NKNGE)/lib -I$(NKNGE)/include -lncknge -lncurses -lm
+	$(CC) $(CFLAGS) -o bin/$(PROGNAME) src/main.c -lncknge -L$(NCKNGE)/lib/$(PLAT) -I$(NCKNGE)/include -lncurses -lm
+
+library:
+	-cd $(NCKNGE); make; cd -
 
 clean:
 	-rm bin/$(PLAT)/*
 
 resources:
-	$(NKNGE)/tools/kbmToC -d src/tex -o src/resource
+	-$(NCKNGE)/tools/kbmToC -d src/tex -o src/resource
 
 name:
 	@echo $(PROGNAME)
