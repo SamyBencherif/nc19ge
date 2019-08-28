@@ -1,10 +1,10 @@
 
 # use local version
-ifndef NKNGE
-NKNGE=../..
+ifndef NCKNGE
+NCKNGE=../..
 endif
 # use system install
-#NKNGE=/usr/local
+#NCKNGE=/usr/local
 
 # base name of binary
 PROG=school-proj
