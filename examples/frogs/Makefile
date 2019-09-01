@@ -7,7 +7,7 @@ endif
 #NKNGE=/usr/local
 
 # base name of binary
-PROG=school-proj
+PROG=frogs
 
 # name of platform
 ifndef PLAT

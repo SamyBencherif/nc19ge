@@ -1,4 +1,4 @@
-# NCurses Kind of Neat Graphical Expansion (ncknge)
+# NCurses Kinetic Normalized Game Engine (ncknge)
 
 Ncknge is a modern program. It does not comform to NCurses standards
 and naming conventions. It does however extend the features of the
