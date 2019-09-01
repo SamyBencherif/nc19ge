@@ -19,7 +19,7 @@ component* title_img_1;
 
 /* SCENES */
 
-typedef enum {title, identity} scene;
+typedef enum {title, identity, gift} scene;
 scene present;
 
 /* DATA */
@@ -29,6 +29,15 @@ int t = 0;
 int cursor_x = 0;
 int cursor_y = 0;
 
+typedef enum {unchoosen, friendly, swift, frugal, courageous, enchanting, wise} skill;
+skill player_skill = unchoosen;
+
+/* CHEAT CODES */
+
+int cheat_index = 0;
+char* cheat_sequence_wisdom = "ppp[*";
+
+bool cheat_wisdom_active = false;
 
 /* HELPER FUNCTIONS */
 
@@ -111,6 +120,8 @@ void init()
         component_remove(title_img_0);
         component_remove(title_img_1);
         break;
+        default:
+        break;
     }
 }
 
@@ -142,76 +153,86 @@ void update()
 
         cursor_y = clampi(0, cursor_y, 4);
 
-        print(5, 9 + cursor_y, CYAN, "I am ");
+        if (cheat_wisdom_active)
+        {
+            print(5, 9 + cursor_y, CYAN, "I am                       ");
+            print(5, 15, BLACK, "Use UP / DOWN to select. enter to choose.");
+        }
+        else
+        {
+            print(5, 9 + cursor_y, CYAN, "I am ");
 
-        print(10, 9, CYAN*(cursor_y == 0), "Friendly");
+            print(10, 9, CYAN*(cursor_y == 0), "Friendly");
 
-        if (cursor_y == 0)
-            printb(60, 5, BLACK, 
-            "Friendliness Trait\n"
-            "---------------------------------------\n"
-            "\n"
-            "* You will have special options \n"
-            "  available to you during negotiations.\n"
-            "\n"
-            "* Other characters will be trusting of\n"
-            "  you.\n"
-            );
+            if (cursor_y == 0)
+                printb(60, 5, BLACK, 
+                "Friendliness Trait\n"
+                "---------------------------------------\n"
+                "\n"
+                "* You will have special options \n"
+                "  available to you during negotiations.\n"
+                "\n"
+                "* Other characters will be trusting of\n"
+                "  you.\n"
+                );
 
 
-        print(10, 10, CYAN*(cursor_y == 1), "Swift");
-        
-        if (cursor_y == 1)
-            printb(60, 5, BLACK, 
-            "Swiftness Trait\n"
-            "---------------------------------------\n"
-            "\n"
-            "* Evasion maneuvers are 23% more likely\n"
-            "  to be successful.\n"
-            "\n"
-            "* Sneaky maneuvers are 30% more likely\n"
-            "  to be successful.\n"
-            "\n"
-            "* Combat strength is increased 5%."
-            );
+            print(10, 10, CYAN*(cursor_y == 1), "Swift");
+            
+            if (cursor_y == 1)
+                printb(60, 5, BLACK, 
+                "Swiftness Trait\n"
+                "---------------------------------------\n"
+                "\n"
+                "* Evasion maneuvers are 23% more likely\n"
+                "  to be successful.\n"
+                "\n"
+                "* Sneaky maneuvers are 30% more likely\n"
+                "  to be successful.\n"
+                "\n"
+                "* Combat strength is increased 5%."
+                );
 
-        print(10, 11, CYAN*(cursor_y == 2), "Frugal");
+            print(10, 11, CYAN*(cursor_y == 2), "Frugal");
 
-        if (cursor_y == 2)
-            printb(60, 5, BLACK, 
-            "Frugality Trait\n"
-            "---------------------------------------\n"
-            "\n"
-            "* You always get the best bargain\n"
-            "\n"
-            "* You are trusted with money.\n"
-            "\n"
-            "* Looting yield increased 12%."
-            );
+            if (cursor_y == 2)
+                printb(60, 5, BLACK, 
+                "Frugality Trait\n"
+                "---------------------------------------\n"
+                "\n"
+                "* You always get the best bargain\n"
+                "\n"
+                "* You are trusted with money.\n"
+                "\n"
+                "* Looting yield increased 12%."
+                );
 
-        print(10, 12, CYAN*(cursor_y == 3), "Courageous");
+            print(10, 12, CYAN*(cursor_y == 3), "Courageous");
 
-        if (cursor_y == 3)
-            printb(60, 5, BLACK, 
-            "Courage Trait\n"
-            "---------------------------------------\n"
-            "\n"
-            "* Combat strength increased 50%.\n"
-            "\n"
-            "* You can collect weapons from defeated\n"
-            "  enemies.\n"
-            );
+            if (cursor_y == 3)
+                printb(60, 5, BLACK, 
+                "Courage Trait\n"
+                "---------------------------------------\n"
+                "\n"
+                "* Combat strength increased 50%.\n"
+                "\n"
+                "* You can collect weapons from defeated\n"
+                "  enemies.\n"
+                );
 
-        print(10, 13, CYAN*(cursor_y == 4), "Enchanting");
+            print(10, 13, CYAN*(cursor_y == 4), "Enchanting");
 
-        if (cursor_y == 4)
-            printb(60, 5, BLACK, 
-            "Enchanter Trait\n"
-            "---------------------------------------\n"
-            "* You ae unsure of your capabilities.\n"
-            );
+            if (cursor_y == 4)
+                printb(60, 5, BLACK, 
+                "Enchanter Trait\n"
+                "---------------------------------------\n"
+                "\n"
+                "* You ae unsure of your capabilities.\n"
+                );
 
-        print(5, 15, BLACK, "Use UP / DOWN to select. ENTER to choose.");
+            print(5, 15, BLACK, "Use UP / DOWN to select. ENTER to choose.");
+        }
+
 
         break;
 
@@ -232,8 +253,39 @@ void key(char k)
     switch (present)
     {
         case title:
+
+        if ( k == cheat_sequence_wisdom[cheat_index] )
+        {
+            cheat_index ++;
+            if (cheat_index < 5)
+                return;
+
+            /* cheat code successful */
+            cheat_wisdom_active = true;
+            cheat_index = 0;
+
+        } else
+        {
+            cheat_index = 0;
+        }
+
         present = identity;
         init();
+        break;
+        case identity:
+        if (k == 13)
+        {
+            if (cursor_y == 0)
+                player_skill = friendly;
+            if (cursor_y == 1)
+                player_skill = swift;
+            if (cursor_y == 2)
+                player_skill = frugal;
+
+            if (cheat_wisdom_active)
+                player_skill = wise;
+            present = gift;
+        }
         break;
         default:
         break;
