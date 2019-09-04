@@ -7,7 +7,9 @@ endif
 #NCKNGE=/usr/local
 
 # base name of binary
-PROG=program
+ifndef PROG
+PROG="$(shell basename '$(shell pwd)')"
+endif
 
 # name of platform
 ifndef PLAT
