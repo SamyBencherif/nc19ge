@@ -26,13 +26,16 @@ endif
 
 CFLAGS=-Wall -std=c89 -Werror#
 
-build: clean resources
-	-mkdir bin
-	-mkdir bin/$(PLAT)
+debug: clean resources
+	$(CC) $(CFLAGS) -Ddev -o bin/$(PROGNAME) src/main.c -L$(NKNGE)/lib/$(PLAT) -I$(NKNGE)/include -lncknge -lncurses -lm
+
+release: clean resources
 	$(CC) $(CFLAGS) -o bin/$(PROGNAME) src/main.c -L$(NKNGE)/lib/$(PLAT) -I$(NKNGE)/include -lncknge -lncurses -lm
 
 clean:
 	-rm bin/$(PLAT)/*
+	-mkdir bin
+	-mkdir bin/$(PLAT)
 
 resources:
 	$(NKNGE)/tools/kbmToC -d src/tex -o src/resource

@@ -1,4 +1,4 @@
-# NCurses Kinetic Normalized Game Engine (ncknge)
+# NCurses Kinetic Normal Game Engine (ncknge)
 
 Ncknge is a modern program. It does not comform to NCurses standards
 and naming conventions. It does however extend the features of the

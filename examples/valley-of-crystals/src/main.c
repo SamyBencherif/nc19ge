@@ -125,6 +125,32 @@ void init()
     }
 }
 
+#ifdef dev
+int value_tester;
+
+void dev_init()
+{
+  /* initialize development variables */
+  value_tester = 0;
+
+  /* skip ahead to the part we are working on */
+  present = identity;
+  init();
+
+  /* set any important state variables */
+  /* ... */
+}
+#endif
+
+void setup()
+{
+    present = title;
+    init();
+    #ifdef dev
+    dev_init();
+    #endif
+}
+
 void update()
 {
     switch (present)
@@ -144,19 +170,23 @@ void update()
         /* printc(W/2, H/2-8, BLACK, "First, choose your identity."); */
         /* printc(W/2, H/2-6, BLACK, "What is your skill?"); */
 
-        printb(5, 5, BLACK, 
-            "First, choose your identity.\n"
-            "\n"
-            "What is your skill?\n"
-            "\n"
-        );
+        print(2, 3, BLACK, "First, choose your identity.");
+
+        print(5, 5, BLACK, "What is your skill?");
 
         cursor_y = clampi(0, cursor_y, 4);
+        
+        int trait_info_x = 37;
+        int trait_info_y = 5;
+
 
         if (cheat_wisdom_active)
         {
+            /* Notice the large amount of space after 'am', produces a blue bar.*/
             print(5, 9 + cursor_y, CYAN, "I am                       ");
-            print(5, 15, BLACK, "Use UP / DOWN to select. enter to choose.");
+
+            /* ENTER is not in caps here */
+            print(5, 20, BLACK, "Use UP / DOWN to select. enter to choose.");
         }
         else
         {
@@ -165,22 +195,21 @@ void update()
             print(10, 9, CYAN*(cursor_y == 0), "Friendly");
 
             if (cursor_y == 0)
-                printb(60, 5, BLACK, 
+                printb(trait_info_x, trait_info_y, BLACK, 
                 "Friendliness Trait\n"
                 "---------------------------------------\n"
                 "\n"
+                "* You are trustworthy and relatable.\n"
+                "\n"
                 "* You will have special options \n"
                 "  available to you during negotiations.\n"
-                "\n"
-                "* Other characters will be trusting of\n"
-                "  you.\n"
                 );
 
 
             print(10, 10, CYAN*(cursor_y == 1), "Swift");
             
             if (cursor_y == 1)
-                printb(60, 5, BLACK, 
+                printb(trait_info_x, trait_info_y, BLACK, 
                 "Swiftness Trait\n"
                 "---------------------------------------\n"
                 "\n"
@@ -196,7 +225,7 @@ void update()
             print(10, 11, CYAN*(cursor_y == 2), "Frugal");
 
             if (cursor_y == 2)
-                printb(60, 5, BLACK, 
+                printb(trait_info_x, trait_info_y, BLACK, 
                 "Frugality Trait\n"
                 "---------------------------------------\n"
                 "\n"
@@ -210,7 +239,7 @@ void update()
             print(10, 12, CYAN*(cursor_y == 3), "Courageous");
 
             if (cursor_y == 3)
-                printb(60, 5, BLACK, 
+                printb(trait_info_x, trait_info_y, BLACK, 
                 "Courage Trait\n"
                 "---------------------------------------\n"
                 "\n"
@@ -223,14 +252,14 @@ void update()
             print(10, 13, CYAN*(cursor_y == 4), "Enchanting");
 
             if (cursor_y == 4)
-                printb(60, 5, BLACK, 
+                printb(trait_info_x, trait_info_y, BLACK, 
                 "Enchanter Trait\n"
                 "---------------------------------------\n"
                 "\n"
                 "* You ae unsure of your capabilities.\n"
                 );
 
-            print(5, 15, BLACK, "Use UP / DOWN to select. ENTER to choose.");
+            print(5, 20, BLACK, "Use UP / DOWN to select. ENTER to choose.");
         }
 
 
@@ -240,16 +269,36 @@ void update()
         break;
     }
     t++;
-}
+    #ifdef dev
 
-void setup()
-{
-    present = title;
-    init();
+    /* DEBUG info */
+    print(
+        0, 0, BLACK, 
+        "value tester: %d "
+        "screen: %dx%d "
+        "cursor: %d,%d", 
+        value_tester,
+        W, H,
+        cursor_x, cursor_y
+    );
+
+    #endif
 }
 
 void key(char k)
 {
+    #ifdef dev
+    if ( k == '[')
+    {
+       value_tester -= 1;
+       return;
+    }
+    if ( k == ']')
+    {
+       value_tester += 1;
+       return;
+    }
+    #endif
     switch (present)
     {
         case title:
