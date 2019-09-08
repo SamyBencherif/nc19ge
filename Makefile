@@ -1,7 +1,7 @@
 
 # use local version
 ifndef NCKNGE
-NCKNGE=../..
+NCKNGE=.
 endif
 # use system install
 #NCKNGE=/usr/local
@@ -39,6 +39,6 @@ library src/ include/:
 
 
 tools tools/:
-	$(CC) $(CFLAGS) -o tools/$(PLAT)/bmp-view src/tools/bmp-view.c -Iinclude -lncknge -lncurses -lm -Llib
-	$(CC) $(CFLAGS) -o tools/$(PLAT)/getKeyCode src/tools/getKeyCode.c -Iinclude -lncknge -lncurses -lm -Llib
+	$(CC) $(CFLAGS) -o tools/$(PLAT)/bmp-view src/tools/bmp-view.c -I$(NCKNGE)/include -lncknge -lncurses -lm -L$(NCKNGE)/lib/$(PLAT)
+	$(CC) $(CFLAGS) -o tools/$(PLAT)/getKeyCode src/tools/getKeyCode.c -I$(NCKNGE)/include -lncknge -lncurses -lm -L$(NCKNGE)/lib/$(PLAT)
 

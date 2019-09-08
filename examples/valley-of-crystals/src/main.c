@@ -14,8 +14,10 @@
 
 #include "resource/KBM_VALLEY_TITLE_0.c"
 #include "resource/KBM_VALLEY_TITLE_1.c"
+#include "resource/KBM_GIFT_GUN.c"
 component* title_img_0;
 component* title_img_1;
+component* gift_gun;
 
 /* SCENES */
 
@@ -119,6 +121,17 @@ void init()
         /* remove title image */
         component_remove(title_img_0);
         component_remove(title_img_1);
+        /* TODO move to unloader fn */
+        break;
+        case gift:
+        cursor_y = 0;
+        gift_gun = bitmap_create(KBM_GIFT_GUN_W,
+                KBM_GIFT_GUN_H,
+                KBM_GIFT_GUN);
+        gift_gun->transform->translate->x = -KBM_GIFT_GUN_W/2;
+        gift_gun->transform->translate->y = (-KBM_GIFT_GUN_H/2
+                                                  + 2) * BLOCK_ASPECT;
+        component_add(gift_gun);
         break;
         default:
         break;
@@ -134,7 +147,7 @@ void dev_init()
   value_tester = 0;
 
   /* skip ahead to the part we are working on */
-  present = identity;
+  present = gift;
   init();
 
   /* set any important state variables */
@@ -145,9 +158,10 @@ void dev_init()
 void setup()
 {
     present = title;
-    init();
     #ifdef dev
     dev_init();
+    #else
+    init();
     #endif
 }
 
@@ -175,7 +189,7 @@ void update()
         print(5, 5, BLACK, "What is your skill?");
 
         cursor_y = clampi(0, cursor_y, 4);
-        
+
         int trait_info_x = 37;
         int trait_info_y = 5;
 
@@ -195,7 +209,7 @@ void update()
             print(10, 9, CYAN*(cursor_y == 0), "Friendly");
 
             if (cursor_y == 0)
-                printb(trait_info_x, trait_info_y, BLACK, 
+                printb(trait_info_x, trait_info_y, BLACK,
                 "Friendliness Trait\n"
                 "---------------------------------------\n"
                 "\n"
@@ -207,9 +221,9 @@ void update()
 
 
             print(10, 10, CYAN*(cursor_y == 1), "Swift");
-            
+
             if (cursor_y == 1)
-                printb(trait_info_x, trait_info_y, BLACK, 
+                printb(trait_info_x, trait_info_y, BLACK,
                 "Swiftness Trait\n"
                 "---------------------------------------\n"
                 "\n"
@@ -225,7 +239,7 @@ void update()
             print(10, 11, CYAN*(cursor_y == 2), "Frugal");
 
             if (cursor_y == 2)
-                printb(trait_info_x, trait_info_y, BLACK, 
+                printb(trait_info_x, trait_info_y, BLACK,
                 "Frugality Trait\n"
                 "---------------------------------------\n"
                 "\n"
@@ -239,7 +253,7 @@ void update()
             print(10, 12, CYAN*(cursor_y == 3), "Courageous");
 
             if (cursor_y == 3)
-                printb(trait_info_x, trait_info_y, BLACK, 
+                printb(trait_info_x, trait_info_y, BLACK,
                 "Courage Trait\n"
                 "---------------------------------------\n"
                 "\n"
@@ -252,11 +266,11 @@ void update()
             print(10, 13, CYAN*(cursor_y == 4), "Enchanting");
 
             if (cursor_y == 4)
-                printb(trait_info_x, trait_info_y, BLACK, 
+                printb(trait_info_x, trait_info_y, BLACK,
                 "Enchanter Trait\n"
                 "---------------------------------------\n"
                 "\n"
-                "* You ae unsure of your capabilities.\n"
+                "* You are unsure of your capabilities.\n"
                 );
 
             print(5, 20, BLACK, "Use UP / DOWN to select. ENTER to choose.");
@@ -264,19 +278,28 @@ void update()
 
 
         break;
+        case gift:
 
+        cursor_y = clampi(0, cursor_y, 0);
+
+        print(2, 3, BLACK, "Now, choose your gift.");
+        print(5, 5 + cursor_y, CYAN, "I choose ");
+        print(14, 5, CYAN*(cursor_y == 0), "the gun.");
+
+        break;
         default:
         break;
     }
     t++;
+
     #ifdef dev
 
     /* DEBUG info */
     print(
-        0, 0, BLACK, 
+        0, 0, BLACK,
         "value tester: %d "
         "screen: %dx%d "
-        "cursor: %d,%d", 
+        "cursor: %d,%d",
         value_tester,
         W, H,
         cursor_x, cursor_y
@@ -322,7 +345,7 @@ void key(char k)
         init();
         break;
         case identity:
-        if (k == 13)
+        if (k == 13) /* RETURN key */
         {
             if (cursor_y == 0)
                 player_skill = friendly;
@@ -333,7 +356,9 @@ void key(char k)
 
             if (cheat_wisdom_active)
                 player_skill = wise;
+
             present = gift;
+            init();
         }
         break;
         default:
@@ -347,7 +372,7 @@ void key(char k)
     if (k == 4) /* Left */
         cursor_x --;
     if (k == 5) /* Right */
-        cursor_x ++; 
+        cursor_x ++;
 }
 
 int main(int argc, char** argv) {
