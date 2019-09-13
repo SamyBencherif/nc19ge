@@ -6,9 +6,10 @@
 #include "ncknge.h"
 
 #include <math.h>
-#ifndef M_PI
-  #define M_PI 3.1415926535897
-#endif
+
+/* M_PI is not included in all platforms, plus variances in this
+ * value would be a needless cause of non-determinism. */
+#define PI 3.1415926535897
 
 /* ASSETS */
 
@@ -87,7 +88,7 @@ void printb(int x, int y, color c, char* msg)
             print(x + xd, y + yd, c, toPrint);
             xd ++;
         }
-    }
+
 }
 
 /* called before each scene */
