@@ -39,6 +39,7 @@ library src/ include/:
 
 
 tools tools/:
-	$(CC) $(CFLAGS) -o tools/$(PLAT)/bmp-view src/tools/bmp-view.c -I$(NCKNGE)/include -lncknge -lncurses -lm -L$(NCKNGE)/lib/$(PLAT)
-	$(CC) $(CFLAGS) -o tools/$(PLAT)/getKeyCode src/tools/getKeyCode.c -I$(NCKNGE)/include -lncknge -lncurses -lm -L$(NCKNGE)/lib/$(PLAT)
+	$(CC) $(CFLAGS) -o bin/tools/$(PLAT)/bmp-view src/tools/bmp-view.c -I$(NCKNGE)/include -lncknge -lncurses -lm -L$(NCKNGE)/lib/$(PLAT)
+	$(CC) $(CFLAGS) -o bin/tools/$(PLAT)/getKeyCode src/tools/getKeyCode.c -I$(NCKNGE)/include -lncknge -lncurses -lm -L$(NCKNGE)/lib/$(PLAT)
+	$(CC) $(CFLAGS) -o bin/tools/$(PLAT)/getKeyCode src/tools/kbmToC.c -I$(NCKNGE)/include -lncknge -lncurses -lm -L$(NCKNGE)/lib/$(PLAT)
 
