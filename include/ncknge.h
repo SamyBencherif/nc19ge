@@ -223,3 +223,6 @@ color peek_world(float x, float y);
 
 void execute(void setup(), void update(),
     void key(char k));
+
+bool NCKNGE_GLOBAL_AUTO_REDRAW;
+void NCKNGE_AUTO_REDRAW(bool set);

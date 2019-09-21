@@ -514,9 +514,7 @@ void draw()
 {
   /*
    * this essential function takes two global objects, the view model,
-   * and the transform and produces the necessary minimal draw.
-   *
-   * (also needs prev model + transform or something)
+   * and the transform and produces the draw.
    *
    */
 
@@ -615,13 +613,15 @@ void execute(void setup(), void update(), void key(char k))
   NCKNGE_GLOBAL_TRANSFORM = transform_new();
   NCKNGE_GLOBAL_SCREEN_INFO = screen_info_get();
   NCKNGE_GLOBAL_WORLD_MODEL = world_model_new();
+  NCKNGE_GLOBAL_AUTO_REDRAW = 1;
 
   setup();
 
   char k;
   while (true)
   {
-    draw();
+    if (NCKNGE_GLOBAL_AUTO_REDRAW)
+      draw();
     update();
 
     k = getch();
@@ -647,4 +647,9 @@ void execute(void setup(), void update(), void key(char k))
    */
 
   endwin();
+}
+
+void NCKNGE_AUTO_REDRAW(bool set)
+{
+    NCKNGE_GLOBAL_AUTO_REDRAW = set;
 }
