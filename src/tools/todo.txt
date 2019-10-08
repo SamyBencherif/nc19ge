@@ -1,0 +1,1 @@
+rename kmbToC.c to resource-packer.c
